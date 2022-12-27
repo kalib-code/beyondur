@@ -5,19 +5,22 @@ import {Cards} from "@/components/Cards";
 import {Dialog, Transition} from '@headlessui/react'
 import {Fragment, useState} from 'react'
 import {useForm} from "@mantine/form";
-import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
-import {IconGripVertical, IconPlus, IconCircleMinus, IconFileUpload} from '@tabler/icons';
+import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
+import {IconCircleMinus, IconFileUpload, IconGripVertical, IconPlus} from '@tabler/icons';
 import {ReorderPayload} from "@mantine/form/lib/types";
 import {supabase} from "../../utils/database/client";
 import {useCreateSpace, useGetSpaces} from "../../hooks/apis";
 import {getPublicUrl} from "../../utils/services/supabase";
 
+interface Props {
+    data: any
+}
 
-const Dashboard: NextPage = () => {
+const Dashboard: NextPage<Props> = ( { data : initial } ) => {
     let [isOpen, setIsOpen] = useState ( false )
     let [publicUrl, setPublicUrl] = useState ( null )
     let [loading, setLoading] = useState ( false )
-    const { data, isFetching } = useGetSpaces ()
+    const { data, isFetching } = useGetSpaces ( initial )
     const mutation = useCreateSpace ()
 
     function closeModal() {
@@ -276,6 +279,17 @@ const Dashboard: NextPage = () => {
         </>
 
     )
+}
+
+export async function getServerSideProps() {
+    const { data, error } = await supabase
+        .from ( 'spaces' )
+        .select ()
+    return {
+        props : {
+            data,
+        }, // will be passed to the page component as props
+    }
 }
 
 export default Dashboard
