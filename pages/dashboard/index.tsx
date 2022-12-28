@@ -10,7 +10,7 @@ import {IconCircleMinus, IconFileUpload, IconGripVertical, IconPlus} from '@tabl
 import {ReorderPayload} from "@mantine/form/lib/types";
 import {supabase} from "../../utils/database/client";
 import {useCreateSpace, useGetSpaces} from "../../hooks/apis";
-import {getPublicUrl} from "../../utils/services/supabase";
+import {handleUploadSupaBase} from "../../hooks/apis/supabase";
 
 interface Props {
     data: any
@@ -91,21 +91,9 @@ const Dashboard: NextPage<Props> = ( { data : initial } ) => {
 
     }
 
-
     const handleUpload = async ( e: any ) => {
-        const file = e.target.files[0]
-        const { data, error } = await supabase
-            .storage
-            .from ( 'images' )
-            .upload ( `public/${file.name}`, file, {
-                cacheControl : '3600',
-                upsert : true,
 
-            } ) as string | any
-        if (error) {
-            console.log ( error )
-        }
-        const url = getPublicUrl ( data?.path )
+        const { url, data } = await handleUploadSupaBase ( e )
         if (url) {
             setPublicUrl ( url )
 

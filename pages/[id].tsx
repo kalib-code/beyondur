@@ -10,8 +10,7 @@ export default function Spaces() {
     const router = useRouter ()
     const { id } = router.query
     const handleAction = () => {
-            router.push ( '/m/[id]' , `/m/${id}` )
-
+        router.push ( '/m/[id]', `/m/${id}` )
     }
     return (
         <div className="bg-dotted-gray-100 bg-dotted-spacing-4  bg-dotted-gray-300">
@@ -32,7 +31,7 @@ export default function Spaces() {
 
                 </div>
                 <div className="flex justify-center my-10">
-                    <button onClick={handleAction} className="btn">Leave a testimony </button>
+                    <button onClick={handleAction} className="btn">Leave a testimony</button>
                 </div>
                 <IconChevronsDown className="mt-15" size={30}/>
             </div>

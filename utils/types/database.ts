@@ -69,6 +69,8 @@ export interface Database {
           modified_at: string | null
           photo: string | null
           attach_images: Json | null
+          message: string | null
+          isUserPermission: boolean | null
           spaces: string | null
         }
         Insert: {
@@ -86,6 +88,8 @@ export interface Database {
           modified_at?: string | null
           photo?: string | null
           attach_images?: Json | null
+          message?: string | null
+          isUserPermission?: boolean | null
           spaces?: string | null
         }
         Update: {
@@ -103,6 +107,8 @@ export interface Database {
           modified_at?: string | null
           photo?: string | null
           attach_images?: Json | null
+          message?: string | null
+          isUserPermission?: boolean | null
           spaces?: string | null
         }
       }
