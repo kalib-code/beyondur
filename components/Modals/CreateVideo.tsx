@@ -1,5 +1,5 @@
 import {Dialog, Transition} from "@headlessui/react";
-import {
+import React, {
     Dispatch,
     Fragment,
     JSXElementConstructor,
@@ -10,6 +10,7 @@ import {
     SetStateAction,
     useCallback,
     useEffect,
+    useMemo,
     useState
 } from "react";
 import Webcam from "react-webcam";
@@ -18,6 +19,8 @@ import {useForm} from "@mantine/form";
 import {useCreateTestimony} from "../../hooks/apis/testimonies";
 import {uploadFile} from "../../utils/services/aws/s3";
 import {Json} from "../../utils/types/database";
+import "plyr-react/plyr.css"
+import Plyr from "plyr-react";
 
 
 interface deviceProps {
@@ -102,6 +105,7 @@ export const CreateVideo = ( { isOpen, setIsOpen, videoFormStep, setVideoFormSte
         audio : ""
     } )
     let [stream, setStream] = useState<Blob> ()
+    let [streamUrl, setStreamUrl] = useState ( "" )
 
 
     const handleDevices = useCallback (
@@ -141,16 +145,7 @@ export const CreateVideo = ( { isOpen, setIsOpen, videoFormStep, setVideoFormSte
     }
 
     // @ts-ignore
-    let newObjectUrl
 
-    if (stream) {
-        // useCallback
-        newObjectUrl = URL.createObjectURL ( stream );
-    }
-
-    const onClickRating = ( rating: number ) => {
-        form.setFieldValue ( 'rating', rating )
-    }
 
     const onSubmitVideo = async ( values: any ) => {
         form.validate ()
@@ -170,9 +165,23 @@ export const CreateVideo = ( { isOpen, setIsOpen, videoFormStep, setVideoFormSte
 
     }
 
-    // @ts-ignore
+    const sourceData = useMemo ( () => {
+        return {
+            source : {
+                type : 'video',
+                sources : [{
+                    src : streamUrl,
+                    type : 'video/webm',
+                }
+                ]
+            }, // https://github.com/sampotts/plyr#the-source-setter
+            options : undefined, // https://github.com/sampotts/plyr#options
+        };
+    }, [streamUrl] );
+
     return (
         <>
+
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={closeModal}>
                     <Transition.Child
@@ -239,7 +248,8 @@ export const CreateVideo = ( { isOpen, setIsOpen, videoFormStep, setVideoFormSte
                                     <div className="mt-2">
                                         {videoFormStep === 0 ? <>
                                             <p className="text-sm text-gray-500">
-                                                You have up to 120 seconds to record your video. Please make sure your
+                                                You have up to 120 seconds to record your video. Please make sure
+                                                your
                                                 camera and microphone are working properly.
                                             </p>
                                         </> : null}
@@ -271,7 +281,9 @@ export const CreateVideo = ( { isOpen, setIsOpen, videoFormStep, setVideoFormSte
                                                     isFlipped
                                                     chunkSize={250}
                                                     onRecordingComplete={async ( videoBlob: any ) => {
+                                                        const Url = URL.createObjectURL ( videoBlob )
                                                         setStream ( videoBlob )
+                                                        setStreamUrl ( Url )
                                                         setVideoFormStep ( 2 )
                                                     }}
                                                     t={( key: any ) => {
@@ -348,13 +360,14 @@ export const CreateVideo = ( { isOpen, setIsOpen, videoFormStep, setVideoFormSte
                                         : null}
                                     {videoFormStep === 2 ? (
                                         <>
-                                            <div className="flex flex-col w-full h-full">
-                                                <video src={newObjectUrl} controls={true} className=""
-                                                       preload="none"/>
+                                            <div className=" justify-center w-fit h-fit">
+                                                <Plyr
+                                                    {...sourceData}
+                                                />
                                             </div>
-                                            <form onSubmit={form.onSubmit ( ( values ) => onSubmitVideo ( values ) )}>
-
-                                                <div className="flex flex-col w-full my-5">
+                                            <div className="flex flex-col w-full my-5">
+                                                <form
+                                                    onSubmit={form.onSubmit ( ( values ) => onSubmitVideo ( values ) )}>
                                                     <div className="rating my-3">
                                                         <input type="radio" name="rating-2" id="rating-2-1"
                                                                className="mask mask-star-2 bg-orange-400"
@@ -389,10 +402,8 @@ export const CreateVideo = ( { isOpen, setIsOpen, videoFormStep, setVideoFormSte
                                                                value={5}
                                                                checked={form.values.rating === 5}
                                                                onChange={() => form.setFieldValue ( 'rating', 5 )}
-
                                                         />
                                                     </div>
-
                                                     <span className="label-text my-2">Your Name</span>
                                                     <input type="text"
                                                            className="input input-bordered w-full max-w-lg my-2"
@@ -421,8 +432,9 @@ export const CreateVideo = ( { isOpen, setIsOpen, videoFormStep, setVideoFormSte
                                                             Send
                                                         </button>
                                                     </div>
-                                                </div>
-                                            </form>
+                                                </form>
+                                            </div>
+
                                         </>
                                     ) : null}
                                 </Dialog.Panel>
@@ -431,6 +443,7 @@ export const CreateVideo = ( { isOpen, setIsOpen, videoFormStep, setVideoFormSte
                     </div>
                 </Dialog>
             </Transition>
+
         </>
     )
 }

@@ -1,9 +1,16 @@
 import Head from 'next/head'
+import {GetServerSideProps} from 'next'
 import {useRouter} from "next/router";
 import {IconChevronsDown} from "@tabler/icons";
 import {LoveCards} from "@/components/LoveCards";
 import {LoveCardsVideo} from "@/components/VideoLoveCard";
 import {NavBar} from "@/components/NavBar";
+import {supabase} from "../utils/database/client";
+
+interface Props {
+    space: {}
+    testimonials: {}
+}
 
 
 export default function Spaces() {
@@ -25,7 +32,7 @@ export default function Spaces() {
                     </h1>
                 </div>
                 <div>
-                    <h1 className="text-accent text-6xl font-bold">
+                    <h1 className="text-accent text-2xl font-base">
                         Hear from the people change by God.
                     </h1>
 
@@ -71,11 +78,29 @@ export default function Spaces() {
     )
 }
 
-export async function getServerSideProps( context: { query: { id: any; }; } ) {
-    // call an external API endpoint to get posts
-
+export const getServerSideProps: GetServerSideProps = async ( context ) => {
     const { id } = context.query
-    return {
-        props : { id }, // will be passed to the page component as props
+    const { data, error } = await supabase
+        .from ( 'spaces' )
+        .select ()
+        .eq ( 'title', id )
+
+    if (data) {
+        const { data : data2, error : error2 } = await supabase
+            .from ( 'testimonials' )
+            .select ()
+            .eq ( 'spaces', data[0].id )
+        return {
+            props : {
+                space : data[0],
+                testimonials : data2
+            }, // will be passed to the page component as props
+        }
     }
+
+    return {
+        props : {}
+    }
+
+
 }
