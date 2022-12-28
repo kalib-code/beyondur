@@ -361,9 +361,11 @@ export const CreateVideo = ( { isOpen, setIsOpen, videoFormStep, setVideoFormSte
                                     {videoFormStep === 2 ? (
                                         <>
                                             <div className=" justify-center w-fit h-fit">
-                                                <Plyr
-                                                    {...sourceData}
-                                                />
+                                                {
+                                                    // @ts-ignore
+                                                    <Plyr
+                                                        {...sourceData}
+                                                    />}
                                             </div>
                                             <div className="flex flex-col w-full my-5">
                                                 <form
