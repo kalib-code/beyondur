@@ -9,6 +9,29 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      profile: {
+        Row: {
+          id: number
+          created_at: string | null
+          image_profile: string | null
+          full_name: string | null
+          profile_id: string | null
+        }
+        Insert: {
+          id?: number
+          created_at?: string | null
+          image_profile?: string | null
+          full_name?: string | null
+          profile_id?: string | null
+        }
+        Update: {
+          id?: number
+          created_at?: string | null
+          image_profile?: string | null
+          full_name?: string | null
+          profile_id?: string | null
+        }
+      }
       spaces: {
         Row: {
           id: string
@@ -23,6 +46,8 @@ export interface Database {
           isUserConsent: boolean | null
           isRating: boolean | null
           links: Json[] | null
+          user_id: string | null
+          image_logo: string | null
         }
         Insert: {
           id?: string
@@ -37,6 +62,8 @@ export interface Database {
           isUserConsent?: boolean | null
           isRating?: boolean | null
           links?: Json[] | null
+          user_id?: string | null
+          image_logo?: string | null
         }
         Update: {
           id?: string
@@ -51,6 +78,8 @@ export interface Database {
           isUserConsent?: boolean | null
           isRating?: boolean | null
           links?: Json[] | null
+          user_id?: string | null
+          image_logo?: string | null
         }
       }
       testimonials: {

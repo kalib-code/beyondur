@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 
+.plyr.plyr--stopped .plyr__controls {
+    display: none
+}
+
 .gZWFJY {
     border: 4px solid rgba(255, 255, 255, 0.4) !important;
     height: 44px !important;

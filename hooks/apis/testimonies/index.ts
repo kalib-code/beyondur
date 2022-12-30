@@ -1,32 +1,12 @@
-import {useMutation, useQuery, useQueryClient} from "react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {supabase} from "../../../utils/database/client";
-import {Json} from "../../../utils/types/database";
-
-export interface ITestimony {
-    id: number
-    created_at: string
-    isVideo: boolean
-    rating: number
-    name: string
-    email: string
-    tags: Json
-    isHighlight: boolean
-    isLike: boolean
-    video_url: string
-    video_thumbnail: string
-    modified_at: string
-    photo: string
-    attach_images: Json
-    spaces: string
-    message: string
-    isUserPermission: boolean
-}
+import {TTestimoniesInsert, TTestimoniesRow} from "../../../utils/types";
 
 
 export const useCreateTestimony = () => {
     const queryClient = useQueryClient ()
     return useMutation (
-        async ( testimony: ITestimony ) => {
+        async ( testimony: TTestimoniesInsert ) => {
             const { data, error } = await supabase
                 .from ( 'testimonials' )
                 .insert ( testimony )
@@ -44,7 +24,7 @@ export const useCreateTestimony = () => {
     )
 }
 
-export const useGetTestimonies = ( id: string, initialData: ITestimony[] ) => {
+export const useGetTestimonies = ( id: string, initialData: TTestimoniesRow[] ) => {
     const queryClient = useQueryClient ()
     const { data } = useQuery ( ['testimonies'], async () => {
             const { data : data2, error : error2 } = await supabase
@@ -62,6 +42,6 @@ export const useGetTestimonies = ( id: string, initialData: ITestimony[] ) => {
             },
         }
     )
-    return data as ITestimony[]
+    return data as TTestimoniesRow[]
 
 }

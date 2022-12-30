@@ -44,7 +44,7 @@ const Walls: NextPage<Props> = ( props ) => {
 
     return (
         <div
-            className=" m-auto bg-dotted-spacing-4 bg-dotted-gray-100 bg-dotted-spacing-4 bg-dotted-gray-300 w-full h-screen z-50  ">
+            className=" m-auto bg-dotted-spacing-4 bg-dotted-gray-300 w-full h-screen z-50  ">
             <NavBar/>
 
             <div className="hero min-h-96  ">
@@ -85,7 +85,8 @@ export const getServerSideProps: GetServerSideProps = async ( context ) => {
     const { data, error } = await supabase
         .from ( 'spaces' )
         .select ()
-        .eq ( 'title', id )
+        .eq ( 'name', id )
+        .single ()
 
     if (error) {
 
@@ -98,7 +99,7 @@ export const getServerSideProps: GetServerSideProps = async ( context ) => {
 
     return {
         props : {
-            data : data[0],
+            data : data,
         }
     }
 }

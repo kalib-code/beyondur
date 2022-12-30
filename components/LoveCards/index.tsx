@@ -1,34 +1,14 @@
-import {Json} from "../../utils/types/database";
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
 import {getPublicUrl} from "../../utils/services/supabase";
 import {Rating} from "@/components/Rating";
-
-interface Props {
-    id: number
-    created_at: string
-    isVideo: boolean | null
-    rating: number | null
-    name: string | null
-    email: string | null
-    tags: Json | null
-    isHighlight: boolean | null
-    isLike: boolean | null
-    video_url: string
-    video_thumbnail: string | null
-    modified_at: string | null
-    photo: string | null
-    attach_images: Json | null
-    message: string | null
-    isUserPermission: boolean | null
-    spaces: string | null
-}
+import {TTestimoniesRow} from "../../utils/types";
 
 
 TimeAgo.addLocale ( en )
 const timeAgo = new TimeAgo ( 'en-US' );
 
-export const LoveCards = ( props: Props ) => {
+export const LoveCards = ( props: TTestimoniesRow ) => {
 
 
     return (
@@ -55,7 +35,7 @@ export const LoveCards = ( props: Props ) => {
                     <div className="rating rating-xs">
                         <Rating rating={props.rating as number}/>
                     </div>
-                    <p className="text-accent text-sm font-base">{timeAgo.format ( Date.parse ( props.created_at ), "twitter" )}</p>
+                    <p className="text-accent text-sm font-base">{timeAgo.format ( Date.parse ( props.created_at as string ), "twitter" )}</p>
 
                 </div>
             </div>

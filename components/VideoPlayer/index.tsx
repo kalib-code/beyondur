@@ -1,7 +1,7 @@
 import {videoUrl} from "../../utils/services/imagekit";
 import {useMemo} from "react";
-import Plyr from "plyr-react"
 import "plyr-react/plyr.css"
+import Plyr from "plyr-react";
 
 
 interface Props {
@@ -40,6 +40,8 @@ export const VideoPlayer = ( props: Props ) => {
     return (
         //@ts-ignore
         <Plyr {...sources}/>
+
+
     )
 
 }

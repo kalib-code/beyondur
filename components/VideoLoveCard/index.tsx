@@ -1,52 +1,16 @@
-import {Json} from "../../utils/types/database";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 import "plyr-react/plyr.css"
 import {VideoPlayer} from "@/components/VideoPlayer";
 import {Rating} from "@/components/Rating";
+import {TTestimoniesRow} from "../../utils/types";
 
-
-interface Props {
-    id: number
-    created_at: string
-    isVideo: boolean
-    rating: number
-    name: string
-    email: string
-    tags: Json
-    isHighlight: boolean
-    isLike: boolean
-    video_url: string
-    video_thumbnail: string
-    modified_at: string
-    photo: string
-    attach_images: Json
-    message: string
-    isUserPermission: boolean
-    spaces: string
-}
-
-const VideoRating = ( rating: number ) => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-        if (i < rating) {
-            stars.push ( <input type="radio" name="rating-1" className="mask mask-star" checked/> )
-        } else {
-            stars.push ( <input type="radio" name="rating-1" className="mask mask-star"/> )
-        }
-    }
-    return (
-        <div>
-            {stars}
-        </div>
-    )
-};
 
 TimeAgo.addLocale ( en )
 const timeAgo = new TimeAgo ( 'en-US' );
 
 
-export const LoveCardsVideo = ( props: Props ) => {
+export const LoveCardsVideo = ( props: TTestimoniesRow ) => {
 
 
     return (
@@ -61,7 +25,7 @@ export const LoveCardsVideo = ( props: Props ) => {
 
                         </div>
                         <div className="rating rating-xs">
-                            <Rating rating={props.rating}/>
+
                         </div>
 
                         {
@@ -69,7 +33,8 @@ export const LoveCardsVideo = ( props: Props ) => {
                             <VideoPlayer url={props.video_url}/>
                         }
                     </div>
-                    <p className="text-accent text-sm font-base">{timeAgo.format ( Date.parse ( props.created_at ), "twitter" )}</p>
+                    <Rating rating={props?.rating as number}/>
+                    <p className="text-accent text-sm font-base">{timeAgo.format ( Date.parse ( props.created_at as string ), "twitter" )}</p>
 
                 </div>
             </div>

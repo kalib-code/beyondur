@@ -14,9 +14,9 @@ export const Rating = ( props: Props ) => {
         }
     }
     return (
-        <>
+        <div className="flex">
             {stars}
-        </>
+        </div>
     )
 
 

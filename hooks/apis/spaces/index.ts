@@ -1,29 +1,16 @@
-import {useMutation, useQuery, useQueryClient,} from 'react-query'
+import {useMutation, useQuery, useQueryClient,} from '@tanstack/react-query'
 import {supabase} from "../../../utils/database/client";
-import {Json} from "../../../utils/types/database";
 
-interface Space {
-    id: string
-    created_at: string
-    modified_at: string
-    name: string
-    title: string
-    message: string
-    questions: Json
-    logo_image: string
-    isVideoOnly: boolean
-    isUserConsent: boolean
-    isRating: boolean
-    links: Json[]
-}
+import {TSpaceInsert, TSpaceRow} from "../../../utils/types";
 
 
-export const useGetSpaces = ( initialData: undefined ) => {
+export const useGetSpaces = ( initialData: TSpaceRow[], user: string ) => {
     const queryClient = useQueryClient ()
     return useQuery ( ['spaces'], async () => {
             const { data, error } = await supabase
                 .from ( 'spaces' )
                 .select ()
+                .eq ( 'user_id', user )
             if (error) {
                 throw new Error ( error.message )
             }
@@ -43,7 +30,7 @@ export const useGetSpaces = ( initialData: undefined ) => {
 export const useCreateSpace = () => {
     const queryClient = useQueryClient ()
     return useMutation (
-        async ( space: any ) => {
+        async ( space: TSpaceInsert ) => {
             const { data, error } = await supabase
                 .from ( 'spaces' )
                 .insert ( space )
@@ -61,22 +48,23 @@ export const useCreateSpace = () => {
     )
 }
 
-export const useGetSpace = ( id: string ) => {
+export const useGetSpace = ( initialData: TSpaceRow ) => {
     const queryClient = useQueryClient ()
 
-    return useQuery ( ['space', id], async () => {
+    return useQuery ( ['space', initialData?.id], async () => {
             const { data, error } = await supabase
                 .from ( 'spaces' )
                 .select ()
-                .eq ( 'id', id )
+                .eq ( 'id', initialData?.id )
             if (error) {
                 throw new Error ( error.message )
             }
-            return data[0] as Space
+            return data[0] as TSpaceRow
         }, {
+            initialData : initialData,
             refetchOnWindowFocus : false,
             onSuccess : ( data ) => {
-                queryClient.setQueryData ( ['space', id], data )
+                queryClient.setQueryData ( ['space', initialData?.id], data )
             },
         }
     )

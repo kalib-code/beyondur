@@ -1,15 +1,18 @@
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import {useSession, useSupabaseClient} from '@supabase/auth-helpers-react'
 
 export default function Home() {
-  return (
-    <>
-        <Head>
-            <title>Home</title>
-        </Head>
-        <div className={styles.container}>
-            <h1>Home</h1>
-        </div>
-    </>
-  )
+    const session = useSession ()
+    const supabase = useSupabaseClient ()
+
+    return (
+        <>
+            <Head>
+                <title>Home</title>
+            </Head>
+            <div className="container mx-auto w-full  max-w-lg">
+                <p>Home page here </p>
+            </div>
+        </>
+    )
 }

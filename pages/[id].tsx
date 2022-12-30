@@ -5,63 +5,24 @@ import {IconChevronsDown} from "@tabler/icons";
 import {LoveCards} from "@/components/LoveCards";
 import {NavBar} from "@/components/NavBar";
 import {supabase} from "../utils/database/client";
-import {Json} from "../utils/types/database";
 import {LoveCardsVideo} from "@/components/VideoLoveCard";
 import {useGetSpace} from "../hooks/apis";
 import {useGetTestimonies} from "../hooks/apis/testimonies";
-import TimeAgo from "javascript-time-ago";
-import en from "javascript-time-ago/locale/en.json";
+import {useUser} from "@supabase/auth-helpers-react";
+
+import {TSpaceRow, TTestimoniesRow} from "../utils/types";
 
 interface Props {
-    space: ISpace
-    testimonials: ITestimony[]
+    space: TSpaceRow
+    testimonials: TTestimoniesRow[]
 }
-
-interface ITestimony {
-    id: number
-    created_at: string
-    isVideo: boolean
-    rating: number
-    name: string
-    email: string
-    tags: Json
-    isHighlight: boolean
-    isLike: boolean
-    video_url: string
-    video_thumbnail: string
-    modified_at: string
-    photo: string
-    attach_images: Json
-    message: string
-    isUserPermission: boolean
-    spaces: string
-}
-
-interface ISpace {
-    id: string
-    created_at: string
-    modified_at: string
-    name: string
-    title: string
-    message: string
-    questions: Json
-    logo_image: string
-    isVideoOnly: boolean
-    isUserConsent: boolean
-    isRating: boolean
-    links: Json[]
-}
-
-
-TimeAgo.addDefaultLocale ( en )
-
 
 export const Spaces: NextPage<Props> = ( props ) => {
-
     const { space, testimonials } = props;
-    const { data : spaceData, isLoading : spacesLoading } = useGetSpace ( space.id );
+    const { data : spaceData, isLoading : spacesLoading } = useGetSpace ( space );
     const testimonialsData = useGetTestimonies ( space.id, testimonials );
-    
+    const user = useUser ()
+
 
     const router = useRouter ()
     const { id } = router.query
@@ -93,7 +54,7 @@ export const Spaces: NextPage<Props> = ( props ) => {
             </div>
             <div className="container mx-auto my-20 ">
 
-                <div className="columns-3 gap-8 h-full columns-1xs ">
+                <div className="columns-4 gap-3 h-full columns-1xs ">
                     {testimonialsData.map ( ( testimonial, index ) => {
 
                         return (
@@ -145,24 +106,30 @@ export const getServerSideProps: GetServerSideProps = async ( context ) => {
     const { data, error } = await supabase
         .from ( 'spaces' )
         .select ()
-        .eq ( 'title', id )
+        .eq ( 'name', id )
+        .single ()
+
+    console.log ( data )
 
     if (data) {
         const { data : data2, error : error2 } = await supabase
             .from ( 'testimonials' )
             .select ()
-            .eq ( 'spaces', data[0].id )
+            .eq ( 'spaces', data.id )
             .order ( 'id', { ascending : false } )
         return {
             props : {
-                space : data[0],
+                space : data,
                 testimonials : data2
             }, // will be passed to the page component as props
         }
     }
 
     return {
-        props : {}
+        props : {
+            space : null,
+            testimonials : null
+        }
     }
 
 

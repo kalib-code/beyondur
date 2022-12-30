@@ -1,27 +1,52 @@
-import {NextPage} from "next";
+import {GetServerSideProps, NextPage} from "next";
 import {NavBar} from "@/components/NavBar";
 import {AiOutlinePlus} from "react-icons/ai";
 import {Cards} from "@/components/Cards";
 import {Dialog, Transition} from '@headlessui/react'
-import {Fragment, useState} from 'react'
+import {Fragment, useEffect, useState} from 'react'
 import {useForm} from "@mantine/form";
 import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
-import {IconCircleMinus, IconFileUpload, IconGripVertical, IconPlus} from '@tabler/icons';
+import {IconCircleMinus, IconFileUpload, IconGripVertical, IconInfoSquare, IconPlus} from '@tabler/icons';
 import {ReorderPayload} from "@mantine/form/lib/types";
-import {supabase} from "../../utils/database/client";
 import {useCreateSpace, useGetSpaces} from "../../hooks/apis";
 import {handleUploadSupaBase} from "../../hooks/apis/supabase";
+import {createServerSupabaseClient} from '@supabase/auth-helpers-nextjs'
+import {TSpaceRow} from "../../utils/types";
+import Image from "next/image";
+import {supabase} from "../../utils/database/client";
 
 interface Props {
-    data: any
+    initialSession: any,
+    user: string,
+    spaces: TSpaceRow[]
 }
 
-const Dashboard: NextPage<Props> = ( { data : initial } ) => {
+const checkIfValidURLSlug = ( str: string ) => {
+    const regexExp = /^[a-z0-9]+(?:-[a-z0-9]+)*$/g;
+    return regexExp.test ( str );
+}
+
+
+interface FormValues {
+    questions: {
+        question: string;
+    }[];
+    space_name: string;
+    header_title: string;
+    custom_message: string;
+    logo: string;
+    user_id: string;
+}
+
+const Dashboard: NextPage<Props> = ( props ) => {
+    const { initialSession, user, spaces } = props;
     let [isOpen, setIsOpen] = useState ( false )
     let [publicUrl, setPublicUrl] = useState ( null )
     let [loading, setLoading] = useState ( false )
-    const { data, isFetching } = useGetSpaces ( initial )
+    const { data, isFetching } = useGetSpaces ( spaces, user )
+
     const mutation = useCreateSpace ()
+
 
     function closeModal() {
         setIsOpen ( false )
@@ -31,15 +56,6 @@ const Dashboard: NextPage<Props> = ( { data : initial } ) => {
         setIsOpen ( true )
     }
 
-    interface FormValues {
-        questions: {
-            question: string;
-        }[];
-        space_name: string;
-        header_title: string;
-        custom_message: string;
-        logo: string;
-    }
 
     const form = useForm<FormValues> ( {
         initialValues : {
@@ -50,13 +66,15 @@ const Dashboard: NextPage<Props> = ( { data : initial } ) => {
             header_title : '',
             custom_message : '',
             logo : '  ',
+            user_id : user,
         },
-        validateInputOnChange : true,
-        validateInputOnBlur : true,
         validate : ( values ) => {
             const errors: any = {};
             if (!values.space_name) {
                 errors.space_name = 'Space name is required';
+            }
+            if (!checkIfValidURLSlug ( values.space_name )) {
+                errors.space_name = 'Invalid space name should be a-z0-9';
             }
             if (!values.header_title) {
                 errors.header_title = 'Header title is required';
@@ -67,6 +85,25 @@ const Dashboard: NextPage<Props> = ( { data : initial } ) => {
             return errors;
         },
     } );
+
+    useEffect ( () => {
+        // search if space name is already taken
+        if (form.values.space_name) {
+            supabase.from ( 'spaces' ).select ( 'name' ).eq ( 'name', form.values.space_name ).then ( ( {
+                                                                                                            data,
+                                                                                                            error
+                                                                                                        } ) => {
+                if (data) {
+                    console.log ( data )
+                    if (data.length > 0) {
+                        form.setFieldError ( 'space_name', 'Space name is already taken' )
+                    }
+                }
+            } )
+
+        }
+
+    }, [form.values.space_name] )
 
     const handleOnSubmit = async ( values: FormValues ) => {
         setLoading ( true )
@@ -81,25 +118,23 @@ const Dashboard: NextPage<Props> = ( { data : initial } ) => {
             isUserConsent : false,
             isRating : false,
             links : [],
+            user_id : values.user_id,
         }
 
         mutation.mutate ( params )
-
         setLoading ( false )
         setIsOpen ( false )
+        setPublicUrl ( null )
         form.reset ()
 
     }
 
     const handleUpload = async ( e: any ) => {
-
-        const { url, data } = await handleUploadSupaBase ( e )
+        const { url, data } = await handleUploadSupaBase ( e, user )
         if (url) {
             setPublicUrl ( url )
-
         }
         form.setValues ( { logo : data?.path } )
-
     }
 
     const fields = form.values.questions.map ( ( _, index ) => (
@@ -122,7 +157,7 @@ const Dashboard: NextPage<Props> = ( { data : initial } ) => {
 
     return (
         <>
-            <div className="  bg-dotted-gray-100 bg-dotted-spacing-4  bg-dotted-gray-300 mx-auto">
+            <div className=" bg-dotted-spacing-4  bg-dotted-gray-300 mx-auto">
                 <div className="container m-auto h-screen">
                     <NavBar/>
                     <div className="flex  justify-between w-full  my-10  justify-items-end ">
@@ -168,7 +203,7 @@ const Dashboard: NextPage<Props> = ( { data : initial } ) => {
                                 leaveTo="opacity-0 scale-95"
                             >
                                 <Dialog.Panel
-                                    className="w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                    className="w-full h-auto max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                                     <Dialog.Title
                                         as="h3"
                                         className="text-lg font-medium leading-6 text-gray-900"
@@ -179,24 +214,36 @@ const Dashboard: NextPage<Props> = ( { data : initial } ) => {
                                         <div className="bg-base-100  w-full">
 
 
-                                            <img className="object-cover h-screen"
-                                                 src="https://images.unsplash.com/photo-1613687194025-417d0e1783aa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80"/>
+                                            <Image className="object-cover h-screen" objectFit={'cover'} width={1000}
+                                                   height={1000}
+                                                   src="https://images.unsplash.com/photo-1613687194025-417d0e1783aa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80"/>
 
                                         </div>
                                         <form onSubmit={form.onSubmit ( ( values ) => handleOnSubmit ( values ) )}>
                                             <div className="form-control">
-                                                <label className="label"> Spaces Name </label>
+
+                                                <div className="tooltip flex items-center"
+                                                     data-tip={"eg, beyondur.com/your-name-space"}>
+                                                    <IconInfoSquare
+                                                        size={20}/>
+                                                    <label className="label"
+                                                    > Spaces
+                                                        URL </label>
+                                                </div>
+
+
                                                 <input type="text" placeholder="Type here"
                                                        className="input input-bordered input-primary w-full max-w-md"
                                                        {...form.getInputProps ( 'space_name' )}
                                                 />
+
                                                 {form.errors.space_name ? (
-                                                    <p className="text-error text-sm my-2"> Name Space is required
-                                                        * </p>
+                                                    <p className="text-error text-sm my-2"> {form.errors.space_name} </p>
                                                 ) : null}
                                                 <div className="avatar my-5 items-center">
                                                     <div className="w-16 rounded-full mr-2">
-                                                        <img src={publicUrl ? publicUrl : './logodefault.jpg'}/>
+                                                        <Image objectFit={"cover"} width={200} height={200}
+                                                               src={publicUrl ? publicUrl : '/./logodefault.jpg'}/>
                                                     </div>
                                                     <label
                                                         className="btn btn-ghost btn-sm w-52 my-2">
@@ -204,7 +251,7 @@ const Dashboard: NextPage<Props> = ( { data : initial } ) => {
                                                         <span className="text-base leading-normal">Select a file</span>
                                                         <input onChange={async ( event ) => {
                                                             await handleUpload ( event )
-                                                        }} type='file' className="hidden"/>
+                                                        }} type='file' accept=" image/jpeg " className="hidden"/>
                                                     </label>
                                                 </div>
 
@@ -269,14 +316,34 @@ const Dashboard: NextPage<Props> = ( { data : initial } ) => {
     )
 }
 
-export async function getServerSideProps() {
-    const { data, error } = await supabase
-        .from ( 'spaces' )
+export const getServerSideProps: GetServerSideProps = async ( ctx ) => {
+    const supabase = createServerSupabaseClient ( ctx )
+
+    const {
+        data : { session },
+    } = await supabase.auth.getSession ()
+
+    const { data : spaces } = await supabase
+        .from ( "spaces" )
         .select ()
+        .eq ( "user_id", session?.user?.id )
+
+
+    if (!session) {
+        return {
+            redirect : {
+                destination : '/auth/login',
+                permanent : false,
+            },
+        }
+    }
+
     return {
         props : {
-            data,
-        }, // will be passed to the page component as props
+            initialSession : session,
+            user : session?.user.id,
+            spaces
+        },
     }
 }
 

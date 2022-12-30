@@ -1,43 +1,33 @@
 import Image from "next/image";
 import {useRouter} from "next/router";
-import { Json} from "../../utils/types/database";
 import {getPublicUrl} from "../../utils/services/supabase";
+import {TSpaceRow} from "../../utils/types";
 
 interface Props {
-    data: {
-        id: string
-        created_at: string | null
-        modified_at: string | null
-        name: string | null
-        title: string | null
-        message: string | null
-        questions: Json | null
-        logo_image: string | null
-        isVideoOnly: boolean | null
-        isUserConsent: boolean | null
-        isRating: boolean | null
-        links: Json[] | null
-    }
+    data: TSpaceRow
 }
 
-export const Cards = ({data}:Props) => {
-
+export const Cards = ( { data }: Props ) => {
     const router = useRouter ()
     const goTo = () => {
-        router.push ( '/[id]', `/${data.title}` )
+        router.push ( '/[id]', `/${data.name}` )
     }
 
-    let Url = getPublicUrl(data.logo_image as string)
+    let Url = getPublicUrl ( data.logo_image as string )
 
     return (
         <>
-            <div onClick={()=>{
-                goTo()
-            }} className="col-span-1 flex shadow-sm rounded-md border border-gray-200 dark:border-gray-600 hover:shadow-md">
-                <Image className="bg-white  inline-flex items-center justify-center h-24 cursor-pointer " objectFit={"cover"} objectPosition={"fill"} width={100} height={100} src={Url} alt="Movie"/>
-                <div className="flex-1 flex items-center justify-between  bg-white dark:bg-gray-800 dark:hover:bg-gray-700 rounded-r-md border-l border-gray-200 dark:border-gray-800 ">
+            <div onClick={() => {
+                goTo ()
+            }}
+                 className="col-span-1 flex shadow-sm rounded-md border border-gray-200 dark:border-gray-600 hover:shadow-md">
+                <Image className="bg-white  inline-flex items-center justify-center h-24 cursor-pointer "
+                       objectFit={"cover"} objectPosition={"fill"} width={100} height={100} src={Url} alt="Movie"/>
+                <div
+                    className="flex-1 flex items-center justify-between  bg-white dark:bg-gray-800 dark:hover:bg-gray-700 rounded-r-md border-l border-gray-200 dark:border-gray-800 ">
                     <div className="flex-1 p-4 cursor-pointer ">
-                        <div className="text-gray-600 dark:text-gray-100 test-md font-medium hover:text-gray-800 dark:hover:text-white">
+                        <div
+                            className="text-gray-600 dark:text-gray-100 test-md font-medium hover:text-gray-800 dark:hover:text-white">
                             {data.title}
                         </div>
                         <div className="grid grid-cols-2">

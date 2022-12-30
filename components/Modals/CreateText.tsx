@@ -5,6 +5,7 @@ import {handleUploadSupaBase} from "../../hooks/apis/supabase";
 import {useForm} from "@mantine/form";
 import {useCreateTestimony} from "../../hooks/apis/testimonies";
 import {Json} from "../../utils/types/database";
+import Image from "next/image";
 
 interface IProps {
     isOpen2: boolean;
@@ -186,7 +187,9 @@ export const CreateText = ( { isOpen2, setIsOpen2, spaceId }: IProps ) => {
                                             )}
                                             <label className="block text-md font-medium text-gray-700 ">Attach
                                                 Image</label>
-                                            {file && <img className={""} src={file} alt=""/>}
+                                            {file &&
+                                                <Image width={"100%"} height={"100%"} className={""}
+                                                       src={file} alt=""/>}
                                             <label
 
                                                 className="btn btn-ghost btn-sm w-52 my-2">
@@ -215,7 +218,8 @@ export const CreateText = ( { isOpen2, setIsOpen2, spaceId }: IProps ) => {
                                             )}
                                             <div className="avatar my-5 items-center">
                                                 <div className="w-16 rounded-full mr-2">
-                                                    <img src={profile ? profile : '../logodefault.jpg'}/>
+                                                    <Image width={"100%"} height={"100%"} objectFit={"cover"}
+                                                           src={profile ? profile : '/../logodefault.jpg'}/>
                                                 </div>
                                                 <label
                                                     className="btn btn-ghost btn-sm w-52 my-2">
