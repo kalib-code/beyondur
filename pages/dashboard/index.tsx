@@ -130,7 +130,7 @@ const Dashboard: NextPage<Props> = ( props ) => {
     }
 
     const handleUpload = async ( e: any ) => {
-        const { url, data } = await handleUploadSupaBase ( e, user )
+        const { url, data } = await handleUploadSupaBase ( e )
         if (url) {
             setPublicUrl ( url )
         }
