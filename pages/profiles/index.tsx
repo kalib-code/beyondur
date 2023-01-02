@@ -4,7 +4,7 @@ import Image from "next/image";
 import {createServerSupabaseClient} from '@supabase/auth-helpers-nextjs'
 
 
-import {TUserInsert, TUserRow} from "../../utils/types";
+import {TUserInsert} from "../../utils/types";
 import {useEffect, useState} from "react";
 import {useForm} from "@mantine/form";
 import {handleUploadSupaBase} from "../../hooks/apis/supabase";
@@ -18,6 +18,7 @@ interface IUserRow extends TUserInsert {
     email: string | undefined
 }
 
+
 interface IProps {
     session: AuthUser
 }
@@ -25,18 +26,31 @@ interface IProps {
 
 const Profile: NextPage<IProps> = ( props ) => {
     const { session } = props
-    let [data, setData] = useState<TUserRow> ( {} as TUserRow )
     let [loading, setLoading] = useState ( false )
     let [publicUrl, setPublicUrl] = useState ( "" )
     const mutation = useUpsertUser ()
-    const { data : info } = useGetIdentity ()
+    const { data : info, isFetching, isError } = useGetIdentity ()
+
+    useEffect ( () => {
+        if (info && !isFetching) {
+
+            form.setValues ( { full_name : info?.profile?.full_name } )
+            form.setValues ( { email : info?.user.email } )
+            form.setValues ( { avatar_url : info?.profile?.avatar_url } )
+            form.setValues ( { id : info?.user.id } )
+
+            setPublicUrl ( getPublicUrl ( info?.profile?.avatar_url as string, 'avatars' ) )
+        }
+
+
+    }, [info, isFetching, isError] )
 
     const form = useForm<IUserRow> ( {
         initialValues : {
-            id : info?.user?.id as string,
-            avatar_url : info?.profile?.avatar_url,
-            full_name : info?.profile?.full_name,
-            email : info?.user?.email,
+            id : '',
+            avatar_url : '',
+            full_name : '',
+            email : '',
         }, validate : ( values ) => {
             const errors: Record<string, string> = {};
             if (!values.full_name) errors.full_name = "Full name is required";
@@ -60,9 +74,6 @@ const Profile: NextPage<IProps> = ( props ) => {
         form.setValues ( { avatar_url : data?.path } )
     }
 
-    useEffect ( () => {
-        setPublicUrl ( getPublicUrl ( info?.profile?.avatar_url as string, 'avatars' ) )
-    }, [] )
 
     return (
         <div className=" mx-auto bg-dotted-spacing-4  bg-dotted-gray-300 ">

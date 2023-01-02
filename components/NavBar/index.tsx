@@ -5,7 +5,7 @@ import {useGetIdentity} from "@/hooks/auth";
 import {getPublicUrl} from "../../utils/services/supabase";
 import {useEffect, useState} from "react";
 
-interface IUser {
+export interface IUser {
     user: any | null,
     profile: {
         id: string,
@@ -22,18 +22,12 @@ export const NavBar = () => {
     const router = useRouter ()
     let [user, setUser] = useState<IUser> ()
 
-    // @ts-ignore
     const { data, isFetching, isError } = useGetIdentity ()
 
     useEffect ( () => {
         if (data) {
             setUser ( data )
         }
-        (
-            () => {
-                setUser ( data )
-            }
-        ) ()
     }, [data, isFetching, isError] )
 
 
