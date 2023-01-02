@@ -13,7 +13,7 @@ export const Cards = ( { data }: Props ) => {
         router.push ( '/[id]', `/${data.name}` )
     }
 
-    let Url = getPublicUrl ( data.logo_image as string )
+    let Url = getPublicUrl ( data.logo_image as string, 'images' )
 
     return (
         <>

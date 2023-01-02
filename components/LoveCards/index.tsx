@@ -19,7 +19,8 @@ export const LoveCards = ( props: TTestimoniesRow ) => {
                         <div className="flex items-center my-2">
                             <div className="avatar mr-2  ">
                                 <div className="w-10 mask mask-squircle">
-                                    <img src={getPublicUrl ( props.photo as string )} alt={props.name as string}/>
+                                    <img src={getPublicUrl ( props.photo as string, 'images' )}
+                                         alt={props.name as string}/>
                                 </div>
                             </div>
                             <div className="items-center ">
@@ -28,7 +29,8 @@ export const LoveCards = ( props: TTestimoniesRow ) => {
                             </div>
                         </div>
                         {props.attach_images ?
-                            <img className="rounded-lg my-5" src={getPublicUrl ( props.attach_images as string )}
+                            <img className="rounded-lg my-5"
+                                 src={getPublicUrl ( props.attach_images as string, 'images' )}
                                  alt={props.name as string}/> : null}
                         <p className="text-sm">{props.message} </p>
                     </div>

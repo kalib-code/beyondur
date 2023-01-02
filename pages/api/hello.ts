@@ -4,13 +4,21 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 import type {Database} from '../../utils/types/database'
 
 export default async ( req: NextApiRequest, res: NextApiResponse ) => {
-    const supabaseServerClient = createServerSupabaseClient<Database> ( {
+    const supabase = createServerSupabaseClient<Database> ( {
         req,
         res,
     } )
-    const {
-        data : { user },
-    } = await supabaseServerClient.auth.getUser ()
 
-    res.status ( 200 ).json ( { name : user?.email ?? '' } )
+    const { id } = req.query
+    let body
+
+    const { data, error } = await supabase
+        .from ( "profile" )
+        .select ()
+        .eq ( "profiles", id )
+        .single ()
+
+    res.status ( 200 ).json ( data )
+
+
 }

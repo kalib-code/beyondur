@@ -8,6 +8,6 @@ export type TTestimoniesRow = Database['public']['Tables']['testimonials']['Row'
 export type TTestimoniesInsert = Database['public']['Tables']['testimonials']['Insert']
 export type TTestimoniesUpdate = Database['public']['Tables']['testimonials']['Update']
 
-export type TUserRow = Database['public']['Tables']['profile']['Row']
-export type TUserInsert = Database['public']['Tables']['profile']['Insert']
-export type TUserUpdate = Database['public']['Tables']['profile']['Update']
+export type TUserRow = Database['public']['Tables']['profiles']['Row']
+export type TUserInsert = Database['public']['Tables']['profiles']['Insert']
+export type TUserUpdate = Database['public']['Tables']['profiles']['Update']

@@ -56,13 +56,13 @@ export const CreateText = ( { isOpen2, setIsOpen2, spaceId }: IProps ) => {
     }
 
     const handleUploadAttach = async ( e: any ) => {
-        const { url, data } = await handleUploadSupaBase ( e )
+        const { url, data } = await handleUploadSupaBase ( e, 'images', 'public' )
         setFile ( url )
         form.setValues ( { attach_images : data?.path } )
     }
 
     const handleUpload = async ( e: any ) => {
-        const { url, data } = await handleUploadSupaBase ( e )
+        const { url, data } = await handleUploadSupaBase ( e, 'images', 'public' )
         setProfile ( url )
         form.setValues ( { photo : data?.path } )
     }
