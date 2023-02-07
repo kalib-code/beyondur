@@ -34,7 +34,7 @@ export const useCreateSpace = () => {
 export const useGetSpace = ( initialData: TSpaceRow[], user: string, ) => {
     const queryClient = useQueryClient ()
 
-    return useQuery ( ['space', user], async () => {
+    return useQuery ( ['space', initialData], async () => {
             const { data : spaces, error } = await supabase
                 .from ( "spaces" )
                 .select ()
@@ -47,7 +47,7 @@ export const useGetSpace = ( initialData: TSpaceRow[], user: string, ) => {
             initialData : initialData,
             refetchOnWindowFocus : false,
             onSuccess : ( data ) => {
-                queryClient.setQueryData ( ['space', data?.id], data )
+                queryClient.setQueryData ( ['space', data], data )
             },
         }
     )
