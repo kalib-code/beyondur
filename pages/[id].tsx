@@ -6,7 +6,6 @@ import {LoveCards} from "@/components/LoveCards";
 import {NavBar} from "@/components/NavBar";
 import {supabase} from "../utils/database/client";
 import {LoveCardsVideo} from "@/components/VideoLoveCard";
-import {useGetSpace} from "../hooks/apis";
 import {useGetTestimonies} from "../hooks/apis/testimonies";
 import {useUser} from "@supabase/auth-helpers-react";
 
@@ -19,7 +18,6 @@ interface Props {
 
 export const Spaces: NextPage<Props> = ( props ) => {
     const { space, testimonials } = props;
-    const { data : spaceData, isLoading : spacesLoading } = useGetSpace ( space );
     const testimonialsData = useGetTestimonies ( space.id, testimonials );
     const user = useUser ()
 
@@ -32,18 +30,18 @@ export const Spaces: NextPage<Props> = ( props ) => {
     return (
         <div className="bg-dotted-gray-100 bg-dotted-spacing-4  bg-dotted-gray-300">
             <Head>
-                <title>{spaceData?.name}</title>
+                <title>{space?.name}</title>
             </Head>
             <NavBar/>
             <div className="grid place-items-center container mx-auto my-20  ">
                 <div>
                     <h1 className="text-accent text-6xl font-bold">
-                        {spaceData?.title}
+                        {space?.title}
                     </h1>
                 </div>
                 <div>
                     <h1 className="text-accent text-2xl font-base">
-                        {spaceData?.message}
+                        {space?.message}
                     </h1>
 
                 </div>
