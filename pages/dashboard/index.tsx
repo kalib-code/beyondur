@@ -8,8 +8,8 @@ import {useForm} from "@mantine/form";
 import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
 import {IconCircleMinus, IconFileUpload, IconGripVertical, IconInfoSquare, IconPlus} from '@tabler/icons';
 import {ReorderPayload} from "@mantine/form/lib/types";
-import {useCreateSpace, useGetSpaces} from "../../hooks/apis";
-import {handleUploadSupaBase} from "../../hooks/apis/supabase";
+import {useCreateSpace, useGetSpace} from "@/hooks/apis";
+import {handleUploadSupaBase} from "@/hooks/apis/supabase";
 import {createServerSupabaseClient} from '@supabase/auth-helpers-nextjs'
 import {TSpaceRow} from "../../utils/types";
 import Image from "next/image";
@@ -43,7 +43,7 @@ const Dashboard: NextPage<Props> = ( props ) => {
     let [isOpen, setIsOpen] = useState ( false )
     let [publicUrl, setPublicUrl] = useState ( null )
     let [loading, setLoading] = useState ( false )
-    const { data, isFetching } = useGetSpaces ( spaces, user )
+    const { data, isFetching } = useGetSpace ( spaces, user )
 
     const mutation = useCreateSpace ()
 
