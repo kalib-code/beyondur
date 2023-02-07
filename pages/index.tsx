@@ -5,6 +5,9 @@ export default function Home() {
     const session = useSession ()
     const supabase = useSupabaseClient ()
 
+    // log environment variables
+    console.log ( process.env.NEXT_PUBLIC_SUPABASE_URL )
+
     return (
         <>
             <Head>

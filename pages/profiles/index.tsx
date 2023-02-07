@@ -18,7 +18,6 @@ interface IUserRow extends TUserInsert {
     email: string | undefined
 }
 
-
 interface IProps {
     session: AuthUser
 }
@@ -41,8 +40,6 @@ const Profile: NextPage<IProps> = ( props ) => {
 
             setPublicUrl ( getPublicUrl ( info?.profile?.avatar_url as string, 'avatars' ) )
         }
-
-
     }, [info, isFetching, isError] )
 
     const form = useForm<IUserRow> ( {
@@ -58,7 +55,6 @@ const Profile: NextPage<IProps> = ( props ) => {
         }
     } )
 
-
     const handleProfileSubmit = async ( values: IUserRow ) => {
         const { email, ...others } = values
         setLoading ( true )
@@ -73,8 +69,6 @@ const Profile: NextPage<IProps> = ( props ) => {
         }
         form.setValues ( { avatar_url : data?.path } )
     }
-
-
     return (
         <div className=" mx-auto bg-dotted-spacing-4  bg-dotted-gray-300 ">
             <NavBar/>
@@ -139,7 +133,6 @@ export const getServerSideProps: GetServerSideProps = async ( ctx ) => {
     return {
         props : {
             session : session
-
         },
     }
 }
