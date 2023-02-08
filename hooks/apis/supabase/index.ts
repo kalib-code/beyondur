@@ -2,7 +2,6 @@ import {supabase} from "../../../utils/database/client";
 import {getPublicUrl} from "../../../utils/services/supabase";
 
 export const handleUploadSupaBase = async ( e: any, collection: string, path: string ) => {
-    console.log ( collection, path, "[path]" )
     const file = e.target.files[0]
     const { data, error } = await supabase
         .storage
