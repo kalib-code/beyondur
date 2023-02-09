@@ -43,8 +43,7 @@ export const VideoPlayer = ( props: Props ) => {
     return (
         //@ts-ignore
         <Plyr {...sources}/>
-
-
+        
     )
 
 }
