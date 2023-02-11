@@ -47,7 +47,7 @@ const Signup: NextPage = () => {
             email : values.email,
             password : values.password,
         } )
-        
+
         if (error) {
             setError ( true )
             setLoading ( false )
@@ -91,7 +91,7 @@ const Signup: NextPage = () => {
                                             className={`btn btn-primary ${loading ? "loading" : ""} mb-4`}>Login
                                     </button>
 
-                                    <button type="submit"
+                                    <button type="button"
                                             onClick={() => router.push ( '/auth/signup' )}
                                             className={`btn btn-ghost`}>Signup
                                     </button>

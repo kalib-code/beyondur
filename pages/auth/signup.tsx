@@ -59,8 +59,7 @@ const Signup: NextPage = () => {
             setLoading ( false )
         }
     }
-
-
+    
     return (
         <>
             <div
@@ -104,7 +103,7 @@ const Signup: NextPage = () => {
                                             className={`btn btn-primary ${loading ? "loading" : ""} mb-4`}>SignUp
                                     </button>
 
-                                    <button type="submit"
+                                    <button type="button"
                                             className={`btn btn-ghost`}>Login
                                     </button>
                                 </div>

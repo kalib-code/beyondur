@@ -1,18 +1,18 @@
 import Head from 'next/head'
 import {useSession, useSupabaseClient} from '@supabase/auth-helpers-react'
 
-export default function Home() {
+export default function Test() {
     const session = useSession ()
     const supabase = useSupabaseClient ()
-    
+
     return (
         <>
             <Head>
-                <title>Home</title>
+                <title>Test</title>
             </Head>
-            <div className="container mx-auto w-full  max-w-lg">
-                <p>Home page here </p>
-            </div>
+            <main className="container mx-auto w-full  max-w-lg">
+                <p>Test page here </p>
+            </main>
         </>
     )
 }
