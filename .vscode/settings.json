@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["supabase", "tabler"]
+  "cSpell.words": ["supabase", "tabler"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

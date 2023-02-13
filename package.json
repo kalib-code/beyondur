@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "update-types": "npx supabase gen types typescript --project-id \"hadgcouxbzsseqdpksjx\" > utils/types/database.ts",
-    "lint": "next lint && eslint --ext .js,.jsx,.ts,.tsx,.vue . && prettier --write . --fix",
+    "lint": "next lint --fix && eslint --ext .js,.jsx,.ts,.tsx,.vue . --fix",
+    "prettier": "prettier --write . --fix",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
@@ -63,6 +64,7 @@
     "@vitejs/plugin-react": "^3.1.0",
     "@vitest/coverage-c8": "^0.28.4",
     "autoprefixer": "^10.4.13",
+    "husky": "^8.0.3",
     "jsdom": "^21.1.0",
     "postcss": "^8.4.20",
     "tailwindcss": "^3.2.4",
