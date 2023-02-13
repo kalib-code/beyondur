@@ -1,24 +1,22 @@
 // Creating a new supabase server client object (e.g. in API route):
-import {createServerSupabaseClient} from '@supabase/auth-helpers-nextjs'
-import type {NextApiRequest, NextApiResponse} from 'next'
-import type {Database} from '../../utils/types/database'
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import type { Database } from '../../utils/types/database'
 
-export default async ( req: NextApiRequest, res: NextApiResponse ) => {
-    const supabase = createServerSupabaseClient<Database> ( {
-        req,
-        res,
-    } )
+// eslint-disable-next-line import/no-anonymous-default-export
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const supabase = createServerSupabaseClient<Database>({
+    req,
+    res,
+  })
 
-    const { id } = req.query
-    let body
+  const { id } = req.query
 
-    const { data, error } = await supabase
-        .from ( "profile" )
-        .select ()
-        .eq ( "profiles", id )
-        .single ()
+  console.log(id)
 
-    res.status ( 200 ).json ( data )
+  const { data } = await supabase.from('profile').select().eq('id', id).single()
 
+  console.log(data)
 
+  res.status(200).json(data)
 }
