@@ -1,21 +1,21 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { TUserInsert, TUserUpdate } from '../../utils/types'
-import { supabase } from '../../utils/database/client'
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { TUserInsert, TUserUpdate } from '../../utils/types';
+import { supabase } from '../../utils/database/client';
 
 export const useUpsertUser = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation(
     async (data: TUserUpdate) => {
       const { data: response } = await supabase
         .from('profiles')
         .upsert(data as TUserInsert)
-        .select()
-      return response
+        .select();
+      return response;
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['GetIdentity'])
+        queryClient.invalidateQueries(['GetIdentity']);
       },
-    }
-  )
-}
+    },
+  );
+};

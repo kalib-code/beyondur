@@ -1,12 +1,12 @@
-import TimeAgo from 'javascript-time-ago'
-import en from 'javascript-time-ago/locale/en'
-import { getPublicUrl } from '../../utils/services/supabase'
-import { Rating } from '@/components/Rating'
-import { TTestimoniesRow } from '../../utils/types'
-import Image from 'next/image'
+import TimeAgo from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en';
+import { getPublicUrl } from '../../utils/services/supabase';
+import { Rating } from '@/components/Rating';
+import { TTestimoniesRow } from '../../utils/types';
+import Image from 'next/image';
 
-TimeAgo.addLocale(en)
-const timeAgo = new TimeAgo('en-US')
+TimeAgo.addLocale(en);
+const timeAgo = new TimeAgo('en-US');
 
 export const LoveCards = (props: TTestimoniesRow) => {
   return (
@@ -51,5 +51,5 @@ export const LoveCards = (props: TTestimoniesRow) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};

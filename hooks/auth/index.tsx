@@ -1,2 +1,2 @@
-export * from './useGetIdentity'
-export * from './useUpdateUser'
+export * from './useGetIdentity';
+export * from './useUpdateUser';

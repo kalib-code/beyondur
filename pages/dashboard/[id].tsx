@@ -1,5 +1,5 @@
-import { Layout } from '@/components/Admin/Layout'
-import Image from 'next/image'
+import { Layout } from '@/components/Admin/Layout';
+import Image from 'next/image';
 
 const Dashboard = () => {
   return (
@@ -12,11 +12,7 @@ const Dashboard = () => {
             </div>
             <div className="flex-none gap-2">
               <div className="form-control">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="input-bordered input"
-                />
+                <input type="text" placeholder="Search" className="input-bordered input" />
               </div>
               <div className="dropdown-end dropdown">
                 <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
@@ -116,7 +112,7 @@ const Dashboard = () => {
         </>
       </Layout>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

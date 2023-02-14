@@ -1,42 +1,42 @@
-import { GetServerSideProps, NextPage } from 'next'
-import { NavBar } from '@/components/NavBar'
-import { CreateVideo } from '@/components/Modals'
+import { GetServerSideProps, NextPage } from 'next';
+import { NavBar } from '@/components/NavBar';
+import { CreateVideo } from '@/components/Modals';
 
-import { useState } from 'react'
-import { CreateText } from '@/components/Modals/CreateText'
-import { supabase } from '../../utils/database/client'
-import { Json } from '../../utils/types/database'
+import { useState } from 'react';
+import { CreateText } from '@/components/Modals/CreateText';
+import { supabase } from '../../utils/database/client';
+import { Json } from '../../utils/types/database';
 
 interface Props {
   data: {
-    id: string
-    created_at: string | null
-    modified_at: string | null
-    name: string | null
-    title: string | null
-    message: string | null
+    id: string;
+    created_at: string | null;
+    modified_at: string | null;
+    name: string | null;
+    title: string | null;
+    message: string | null;
     questions: {
-      question: string
-    }[]
-    logo_image: string | null
-    isVideoOnly: boolean | null
-    isUserConsent: boolean | null
-    isRating: boolean | null
-    links: Json[] | null
-  }
+      question: string;
+    }[];
+    logo_image: string | null;
+    isVideoOnly: boolean | null;
+    isUserConsent: boolean | null;
+    isRating: boolean | null;
+    links: Json[] | null;
+  };
 }
 
-const Walls: NextPage<Props> = (props) => {
-  let [isOpen, setIsOpen] = useState(false)
-  let [isOpen2, setIsOpen2] = useState(false)
-  let [videoFormStep, setVideoFormStep] = useState(0)
+const Walls: NextPage<Props> = props => {
+  let [isOpen, setIsOpen] = useState(false);
+  let [isOpen2, setIsOpen2] = useState(false);
+  let [videoFormStep, setVideoFormStep] = useState(0);
 
   function openModal() {
-    setIsOpen(true)
+    setIsOpen(true);
   }
 
   function openModal2() {
-    setIsOpen2(true)
+    setIsOpen2(true);
   }
 
   return (
@@ -52,7 +52,7 @@ const Walls: NextPage<Props> = (props) => {
               <h2 className="text-2xl font-bold">Questions</h2>
               <ul>
                 {props.data.questions.map((question, index) => {
-                  return <li key={index}>{question.question}</li>
+                  return <li key={index}>{question.question}</li>;
                 })}
               </ul>
             </div>
@@ -75,36 +75,28 @@ const Walls: NextPage<Props> = (props) => {
         setVideoFormStep={setVideoFormStep}
         spaceId={props.data}
       />
-      <CreateText
-        isOpen2={isOpen2}
-        setIsOpen2={setIsOpen2}
-        spaceId={props.data}
-      />
+      <CreateText isOpen2={isOpen2} setIsOpen2={setIsOpen2} spaceId={props.data} />
     </div>
-  )
-}
+  );
+};
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.query
+export const getServerSideProps: GetServerSideProps = async context => {
+  const { id } = context.query;
 
-  const { data, error } = await supabase
-    .from('spaces')
-    .select()
-    .eq('name', id)
-    .single()
+  const { data, error } = await supabase.from('spaces').select().eq('name', id).single();
 
   if (error) {
     return {
       props: {},
-    }
+    };
   }
-  console.log(data)
+  console.log(data);
 
   return {
     props: {
       data: data,
     },
-  }
-}
+  };
+};
 
-export default Walls
+export default Walls;

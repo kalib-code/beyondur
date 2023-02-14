@@ -1,5 +1,5 @@
 const EmailConfirmation = () => {
-  return <>Check your email for a confirmation link.</>
-}
+  return <>Check your email for a confirmation link.</>;
+};
 
-export default EmailConfirmation
+export default EmailConfirmation;

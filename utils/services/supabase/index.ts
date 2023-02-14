@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { supabase } from '../../database/client'
+import { supabase } from '../../database/client';
 
 interface PublicUrl {
-  publicUrl: string
+  publicUrl: string;
 }
 
 /**
@@ -13,9 +13,7 @@ interface PublicUrl {
  */
 
 export const getPublicUrl = (path: string, collection: string) => {
-  const { data: URL } = supabase.storage.from(collection).getPublicUrl(path) as
-    | PublicUrl
-    | any
+  const { data: URL } = supabase.storage.from(collection).getPublicUrl(path) as PublicUrl | any;
 
-  return URL.publicUrl
-}
+  return URL.publicUrl;
+};

@@ -1,73 +1,73 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Dialog, Transition } from '@headlessui/react'
-import { Dispatch, Fragment, SetStateAction, useState } from 'react'
-import { IconFileUpload } from '@tabler/icons'
-import { handleUploadSupaBase } from '../../hooks/apis/supabase'
-import { useForm } from '@mantine/form'
-import { useCreateTestimony } from '../../hooks/apis/testimonies'
-import { Json } from '../../utils/types/database'
-import Image from 'next/image'
+import { Dialog, Transition } from '@headlessui/react';
+import { Dispatch, Fragment, SetStateAction, useState } from 'react';
+import { IconFileUpload } from '@tabler/icons';
+import { handleUploadSupaBase } from '../../hooks/apis/supabase';
+import { useForm } from '@mantine/form';
+import { useCreateTestimony } from '../../hooks/apis/testimonies';
+import { Json } from '../../utils/types/database';
+import Image from 'next/image';
 
 interface IProps {
-  isOpen2: boolean
-  setIsOpen2: Dispatch<SetStateAction<boolean>>
+  isOpen2: boolean;
+  setIsOpen2: Dispatch<SetStateAction<boolean>>;
   spaceId: {
-    id: string
-    created_at: string | null
-    modified_at: string | null
-    name: string | null
-    title: string | null
-    message: string | null
+    id: string;
+    created_at: string | null;
+    modified_at: string | null;
+    name: string | null;
+    title: string | null;
+    message: string | null;
     questions: {
-      question: string
-    }[]
-    logo_image: string | null
-    isVideoOnly: boolean | null
-    isUserConsent: boolean | null
-    isRating: boolean | null
-    links: Json[] | null
-  }
+      question: string;
+    }[];
+    logo_image: string | null;
+    isVideoOnly: boolean | null;
+    isUserConsent: boolean | null;
+    isRating: boolean | null;
+    links: Json[] | null;
+  };
 }
 
 interface IForm {
-  rating: number
-  message: string
-  attach_images: string
-  email: string
-  name: string
-  photo: string
-  isUserPermission: boolean
-  isHighlight: boolean
-  isLike: boolean
-  spaces: string
+  rating: number;
+  message: string;
+  attach_images: string;
+  email: string;
+  name: string;
+  photo: string;
+  isUserPermission: boolean;
+  isHighlight: boolean;
+  isLike: boolean;
+  spaces: string;
 }
 
 export const CreateText = ({ isOpen2, setIsOpen2, spaceId }: IProps) => {
-  let [file, setFile] = useState<string>('')
-  let [profile, setProfile] = useState<string>('')
-  const mutation = useCreateTestimony()
+  let [file, setFile] = useState<string>('');
+  let [profile, setProfile] = useState<string>('');
+  const mutation = useCreateTestimony();
 
   function closeModal() {
-    setIsOpen2(false)
-    form.reset()
+    setIsOpen2(false);
+    form.reset();
   }
 
   const handleUploadAttach = async (e: any) => {
-    const { url, data } = await handleUploadSupaBase(e, 'images', 'public')
-    setFile(url)
-    form.setValues({ attach_images: data?.path })
-  }
+    const { url, data } = await handleUploadSupaBase(e, 'images', 'public');
+    setFile(url);
+    form.setValues({ attach_images: data?.path });
+  };
 
   const handleUpload = async (e: any) => {
-    const { url, data } = await handleUploadSupaBase(e, 'images', 'public')
-    setProfile(url)
-    form.setValues({ photo: data?.path })
-  }
+    const { url, data } = await handleUploadSupaBase(e, 'images', 'public');
+    setProfile(url);
+    form.setValues({ photo: data?.path });
+  };
 
   const onSubmitText = async (values: any) => {
-    mutation.mutate(values)
-    closeModal()
-  }
+    mutation.mutate(values);
+    closeModal();
+  };
 
   const form = useForm<IForm>({
     initialValues: {
@@ -82,25 +82,25 @@ export const CreateText = ({ isOpen2, setIsOpen2, spaceId }: IProps) => {
       isLike: false,
       spaces: spaceId.id,
     },
-    validate: (values) => {
-      const errors: Record<string, string> = {}
+    validate: values => {
+      const errors: Record<string, string> = {};
 
       if (!values.name) {
-        errors.name = 'Name is required'
+        errors.name = 'Name is required';
       }
       if (!values.email) {
-        errors.email = 'Email is required'
+        errors.email = 'Email is required';
       }
 
       if (!values.message) {
-        errors.message = 'Message is required'
+        errors.message = 'Message is required';
       }
       if (values.rating <= 0) {
-        errors.rating = 'Rating is required'
+        errors.rating = 'Rating is required';
       }
-      return errors
+      return errors;
     },
-  })
+  });
   return (
     <>
       <Transition appear show={isOpen2} as={Fragment}>
@@ -136,9 +136,7 @@ export const CreateText = ({ isOpen2, setIsOpen2, spaceId }: IProps) => {
                     Write your testimony
                   </Dialog.Title>
                   <div className="mt-2 flex flex-col">
-                    <form
-                      onSubmit={form.onSubmit((values) => onSubmitText(values))}
-                    >
+                    <form onSubmit={form.onSubmit(values => onSubmitText(values))}>
                       <div className="rating my-3">
                         <label className={'mr-2'}>Rating</label>
                         <input
@@ -190,40 +188,28 @@ export const CreateText = ({ isOpen2, setIsOpen2, spaceId }: IProps) => {
                         {...form.getInputProps('message')}
                       ></textarea>
                       {form.errors.message && (
-                        <div className="text-xs text-red-500">
-                          {form.errors.message}
-                        </div>
+                        <div className="text-xs text-red-500">{form.errors.message}</div>
                       )}
                       <label className="text-md block font-medium text-gray-700 ">
                         Attach Image
                       </label>
                       {file && (
-                        <Image
-                          width={'100%'}
-                          height={'100%'}
-                          className={''}
-                          src={file}
-                          alt=""
-                        />
+                        <Image width={'100%'} height={'100%'} className={''} src={file} alt="" />
                       )}
                       <label className="btn-ghost btn-sm btn my-2 w-52">
                         <IconFileUpload size={20} />
-                        <span className="text-base leading-normal">
-                          Attach Images
-                        </span>
+                        <span className="text-base leading-normal">Attach Images</span>
 
                         <input
-                          onChange={async (event) => {
-                            await handleUploadAttach(event)
+                          onChange={async event => {
+                            await handleUploadAttach(event);
                           }}
                           type="file"
                           accept="image/jpeg"
                           className="hidden"
                         />
                       </label>
-                      <label className="text-md block font-medium text-gray-700 ">
-                        Email
-                      </label>
+                      <label className="text-md block font-medium text-gray-700 ">Email</label>
                       <input
                         type="text"
                         placeholder="Type here"
@@ -231,13 +217,9 @@ export const CreateText = ({ isOpen2, setIsOpen2, spaceId }: IProps) => {
                         {...form.getInputProps('email')}
                       />
                       {form.errors.email && (
-                        <div className="text-xs text-red-500">
-                          {form.errors.email}
-                        </div>
+                        <div className="text-xs text-red-500">{form.errors.email}</div>
                       )}
-                      <label className="text-md block font-medium text-gray-700 ">
-                        Name
-                      </label>
+                      <label className="text-md block font-medium text-gray-700 ">Name</label>
                       <input
                         type="text"
                         placeholder="Type here"
@@ -245,9 +227,7 @@ export const CreateText = ({ isOpen2, setIsOpen2, spaceId }: IProps) => {
                         {...form.getInputProps('name')}
                       />
                       {form.errors.name && (
-                        <div className="text-xs text-red-500">
-                          {form.errors.name}
-                        </div>
+                        <div className="text-xs text-red-500">{form.errors.name}</div>
                       )}
                       <div className="avatar my-5 items-center">
                         <div className="mr-2 w-16 rounded-full">
@@ -261,12 +241,10 @@ export const CreateText = ({ isOpen2, setIsOpen2, spaceId }: IProps) => {
                         </div>
                         <label className="btn-ghost btn-sm btn my-2 w-52">
                           <IconFileUpload size={20} />
-                          <span className="text-base leading-normal">
-                            Upload Profile{' '}
-                          </span>
+                          <span className="text-base leading-normal">Upload Profile </span>
                           <input
-                            onChange={async (event) => {
-                              await handleUpload(event)
+                            onChange={async event => {
+                              await handleUpload(event);
                             }}
                             type="file"
                             accept="image/jpeg"
@@ -289,10 +267,7 @@ export const CreateText = ({ isOpen2, setIsOpen2, spaceId }: IProps) => {
                       </div>
 
                       <div className="mt-4 flex justify-end">
-                        <button
-                          onClick={closeModal}
-                          className="btn-ghost btn mr-5"
-                        >
+                        <button onClick={closeModal} className="btn-ghost btn mr-5">
                           Cancel
                         </button>
                         <button type={'submit'} className="btn-primary btn">
@@ -308,5 +283,5 @@ export const CreateText = ({ isOpen2, setIsOpen2, spaceId }: IProps) => {
         </Dialog>
       </Transition>
     </>
-  )
-}
+  );
+};

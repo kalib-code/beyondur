@@ -1,34 +1,28 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '../../../utils/database/client'
-import { TTestimoniesInsert, TTestimoniesRow } from '../../../utils/types'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '../../../utils/database/client';
+import { TTestimoniesInsert, TTestimoniesRow } from '../../../utils/types';
 
 export const useCreateTestimony = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation(
     async (testimony: TTestimoniesInsert) => {
-      const { data, error } = await supabase
-        .from('testimonials')
-        .insert(testimony)
-        .select()
+      const { data, error } = await supabase.from('testimonials').insert(testimony).select();
       if (error) {
-        throw new Error(error.message)
+        throw new Error(error.message);
       }
-      return data
+      return data;
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['testimonies'])
+        queryClient.invalidateQueries(['testimonies']);
       },
-    }
-  )
-}
+    },
+  );
+};
 
-export const useGetTestimonies = (
-  id: string,
-  initialData: TTestimoniesRow[]
-) => {
-  const queryClient = useQueryClient()
+export const useGetTestimonies = (id: string, initialData: TTestimoniesRow[]) => {
+  const queryClient = useQueryClient();
   const { data } = useQuery(
     ['testimonies'],
     async () => {
@@ -36,17 +30,17 @@ export const useGetTestimonies = (
         .from('testimonials')
         .select()
         .eq('spaces', id)
-        .order('id', { ascending: false })
-      return data2
+        .order('id', { ascending: false });
+      return data2;
     },
     {
       //@ts-ignore
       initialData: initialData,
       refetchOnWindowFocus: false,
-      onSuccess: (data) => {
-        queryClient.setQueryData(['testimonies'], data)
+      onSuccess: data => {
+        queryClient.setQueryData(['testimonies'], data);
       },
-    }
-  )
-  return data as TTestimoniesRow[]
-}
+    },
+  );
+  return data as TTestimoniesRow[];
+};

@@ -1,29 +1,29 @@
-import Head from 'next/head'
-import { GetServerSideProps, NextPage } from 'next'
-import { useRouter } from 'next/router'
-import { IconChevronsDown } from '@tabler/icons'
-import { LoveCards } from '@/components/LoveCards'
-import { NavBar } from '@/components/NavBar'
-import { supabase } from '../utils/database/client'
-import { LoveCardsVideo } from '@/components/VideoLoveCard'
-import { useGetTestimonies } from '../hooks/apis/testimonies'
+import Head from 'next/head';
+import { GetServerSideProps, NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { IconChevronsDown } from '@tabler/icons';
+import { LoveCards } from '@/components/LoveCards';
+import { NavBar } from '@/components/NavBar';
+import { supabase } from '../utils/database/client';
+import { LoveCardsVideo } from '@/components/VideoLoveCard';
+import { useGetTestimonies } from '../hooks/apis/testimonies';
 
-import { TSpaceRow, TTestimoniesRow } from '../utils/types'
+import { TSpaceRow, TTestimoniesRow } from '../utils/types';
 
 interface Props {
-  space: TSpaceRow
-  testimonials: TTestimoniesRow[]
+  space: TSpaceRow;
+  testimonials: TTestimoniesRow[];
 }
 
-export const Spaces: NextPage<Props> = (props) => {
-  const { space, testimonials } = props
-  const testimonialsData = useGetTestimonies(space.id, testimonials)
+export const Spaces: NextPage<Props> = props => {
+  const { space, testimonials } = props;
+  const testimonialsData = useGetTestimonies(space.id, testimonials);
 
-  const router = useRouter()
-  const { id } = router.query
+  const router = useRouter();
+  const { id } = router.query;
   const handleAction = () => {
-    router.push('/m/[id]', `/m/${id}`)
-  }
+    router.push('/m/[id]', `/m/${id}`);
+  };
   return (
     <div className="bg-dotted-spacing-4  bg-dotted-gray-300">
       <Head>
@@ -55,7 +55,7 @@ export const Spaces: NextPage<Props> = (props) => {
                   <LoveCards key={index} {...testimonial} />
                 )}
               </>
-            )
+            );
           })}
         </div>
       </div>
@@ -100,31 +100,27 @@ export const Spaces: NextPage<Props> = (props) => {
         </div>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.query
-  const { data } = await supabase
-    .from('spaces')
-    .select()
-    .eq('name', id)
-    .single()
+export const getServerSideProps: GetServerSideProps = async context => {
+  const { id } = context.query;
+  const { data } = await supabase.from('spaces').select().eq('name', id).single();
 
-  console.log(data)
+  console.log(data);
 
   if (data) {
     const { data: data2 } = await supabase
       .from('testimonials')
       .select()
       .eq('spaces', data.id)
-      .order('id', { ascending: false })
+      .order('id', { ascending: false });
     return {
       props: {
         space: data,
         testimonials: data2,
       }, // will be passed to the page component as props
-    }
+    };
   }
 
   return {
@@ -132,7 +128,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       space: null,
       testimonials: null,
     },
-  }
-}
+  };
+};
 
-export default Spaces
+export default Spaces;

@@ -1,12 +1,12 @@
-import TimeAgo from 'javascript-time-ago'
-import en from 'javascript-time-ago/locale/en.json'
-import 'plyr-react/plyr.css'
-import { VideoPlayer } from '@/components/VideoPlayer'
-import { Rating } from '@/components/Rating'
-import { TTestimoniesRow } from '../../utils/types'
+import TimeAgo from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en.json';
+import 'plyr-react/plyr.css';
+import { VideoPlayer } from '@/components/VideoPlayer';
+import { Rating } from '@/components/Rating';
+import { TTestimoniesRow } from '../../utils/types';
 
-TimeAgo.addLocale(en)
-const timeAgo = new TimeAgo('en-US')
+TimeAgo.addLocale(en);
+const timeAgo = new TimeAgo('en-US');
 
 export const LoveCardsVideo = (props: TTestimoniesRow) => {
   return (
@@ -29,5 +29,5 @@ export const LoveCardsVideo = (props: TTestimoniesRow) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};

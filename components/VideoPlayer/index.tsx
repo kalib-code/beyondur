@@ -1,18 +1,18 @@
-import { videoUrl } from '../../utils/services/imagekit'
-import { useMemo } from 'react'
-import 'plyr-react/plyr.css'
-import Plyr from 'plyr-react'
+import { videoUrl } from '../../utils/services/imagekit';
+import { useMemo } from 'react';
+import 'plyr-react/plyr.css';
+import Plyr from 'plyr-react';
 
 interface Props {
-  url: string
+  url: string;
 }
 
 export const VideoPlayer = (props: Props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const thumbnail = () => {
-    const res = videoUrl(props.url)
-    return res + '/ik-thumbnail.jpg'
-  }
+    const res = videoUrl(props.url);
+    return res + '/ik-thumbnail.jpg';
+  };
 
   const sources = useMemo(() => {
     return {
@@ -35,12 +35,12 @@ export const VideoPlayer = (props: Props) => {
         },
         //blankVideo : 'https://cdn.plyr.io/static/blank.mp4', // Used as a fallback for unsupported browsers (i.e. IE)
       }, // https://github.com/sampotts/plyr#options
-    }
-  }, [props.url, thumbnail])
+    };
+  }, [props.url, thumbnail]);
 
   return (
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     <Plyr {...sources} />
-  )
-}
+  );
+};

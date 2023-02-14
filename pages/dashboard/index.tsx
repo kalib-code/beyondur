@@ -1,64 +1,64 @@
-import { GetServerSideProps, NextPage } from 'next'
-import { NavBar } from '@/components/NavBar'
-import { AiOutlinePlus } from 'react-icons/ai'
-import { Cards } from '@/components/Cards'
-import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useEffect, useState } from 'react'
-import { useForm } from '@mantine/form'
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
+import { GetServerSideProps, NextPage } from 'next';
+import { NavBar } from '@/components/NavBar';
+import { AiOutlinePlus } from 'react-icons/ai';
+import { Cards } from '@/components/Cards';
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, useEffect, useState } from 'react';
+import { useForm } from '@mantine/form';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import {
   IconCircleMinus,
   IconFileUpload,
   IconGripVertical,
   IconInfoSquare,
   IconPlus,
-} from '@tabler/icons'
-import { ReorderPayload } from '@mantine/form/lib/types'
-import { useCreateSpace, useGetSpace } from '@/hooks/apis'
-import { handleUploadSupaBase } from '@/hooks/apis/supabase'
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
-import { TSpaceRow } from '../../utils/types'
-import Image from 'next/image'
-import { supabase } from '../../utils/database/client'
+} from '@tabler/icons';
+import { ReorderPayload } from '@mantine/form/lib/types';
+import { useCreateSpace, useGetSpace } from '@/hooks/apis';
+import { handleUploadSupaBase } from '@/hooks/apis/supabase';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { TSpaceRow } from '../../utils/types';
+import Image from 'next/image';
+import { supabase } from '../../utils/database/client';
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialSession: any
-  user: string
-  spaces: TSpaceRow[]
+  initialSession: any;
+  user: string;
+  spaces: TSpaceRow[];
 }
 
 const checkIfValidURLSlug = (str: string) => {
-  const regexExp = /^[a-z0-9]+(?:-[a-z0-9]+)*$/g
-  return regexExp.test(str)
-}
+  const regexExp = /^[a-z0-9]+(?:-[a-z0-9]+)*$/g;
+  return regexExp.test(str);
+};
 
 interface FormValues {
   questions: {
-    question: string
-  }[]
-  space_name: string
-  header_title: string
-  custom_message: string
-  logo: string
-  user_id: string
+    question: string;
+  }[];
+  space_name: string;
+  header_title: string;
+  custom_message: string;
+  logo: string;
+  user_id: string;
 }
 
-const Dashboard: NextPage<Props> = (props) => {
-  const { user, spaces } = props
-  let [isOpen, setIsOpen] = useState(false)
-  let [publicUrl, setPublicUrl] = useState(null)
-  let [loading, setLoading] = useState(false)
-  const { data } = useGetSpace(spaces, user)
+const Dashboard: NextPage<Props> = props => {
+  const { user, spaces } = props;
+  let [isOpen, setIsOpen] = useState(false);
+  let [publicUrl, setPublicUrl] = useState(null);
+  let [loading, setLoading] = useState(false);
+  const { data } = useGetSpace(spaces, user);
 
-  const mutation = useCreateSpace()
+  const mutation = useCreateSpace();
 
   function closeModal() {
-    setIsOpen(false)
+    setIsOpen(false);
   }
 
   function openModal() {
-    setIsOpen(true)
+    setIsOpen(true);
   }
 
   const form = useForm<FormValues>({
@@ -70,24 +70,24 @@ const Dashboard: NextPage<Props> = (props) => {
       logo: '  ',
       user_id: user,
     },
-    validate: (values) => {
+    validate: values => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const errors: any = {}
+      const errors: any = {};
       if (!values.space_name) {
-        errors.space_name = 'Space name is required'
+        errors.space_name = 'Space name is required';
       }
       if (!checkIfValidURLSlug(values.space_name)) {
-        errors.space_name = 'Invalid space name should be a-z0-9'
+        errors.space_name = 'Invalid space name should be a-z0-9';
       }
       if (!values.header_title) {
-        errors.header_title = 'Header title is required'
+        errors.header_title = 'Header title is required';
       }
       if (!values.custom_message) {
-        errors.custom_message = 'Custom message is required'
+        errors.custom_message = 'Custom message is required';
       }
-      return errors
+      return errors;
     },
-  })
+  });
 
   useEffect(() => {
     // search if space name is already taken
@@ -98,21 +98,21 @@ const Dashboard: NextPage<Props> = (props) => {
         .eq('name', form.values.space_name)
         .then(({ data, error }) => {
           if (data) {
-            console.log(data)
+            console.log(data);
             if (data.length > 0) {
-              form.setFieldError('space_name', 'Space name is already taken')
+              form.setFieldError('space_name', 'Space name is already taken');
             }
           }
           if (error) {
-            console.log(error)
+            console.log(error);
           }
-        })
+        });
     }
-  }, [form])
+  }, [form]);
 
   const handleOnSubmit = async (values: FormValues) => {
-    setLoading(true)
-    form.validate()
+    setLoading(true);
+    form.validate();
     const params = {
       name: values.space_name,
       title: values.header_title,
@@ -124,26 +124,26 @@ const Dashboard: NextPage<Props> = (props) => {
       isRating: false,
       links: [],
       user_id: values.user_id,
-    }
+    };
 
-    mutation.mutate(params)
-    setLoading(false)
-    setIsOpen(false)
-    setPublicUrl(null)
-    form.reset()
-  }
+    mutation.mutate(params);
+    setLoading(false);
+    setIsOpen(false);
+    setPublicUrl(null);
+    form.reset();
+  };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { url, data } = await handleUploadSupaBase(e, 'images', 'public ')
+    const { url, data } = await handleUploadSupaBase(e, 'images', 'public ');
     if (url) {
-      setPublicUrl(url)
+      setPublicUrl(url);
     }
-    form.setValues({ logo: data?.path })
-  }
+    form.setValues({ logo: data?.path });
+  };
 
   const fields = form.values.questions.map((_, index) => (
     <Draggable key={index} index={index} draggableId={index.toString()}>
-      {(provided) => (
+      {provided => (
         <div
           className="relative my-4 flex items-center"
           ref={provided.innerRef}
@@ -157,16 +157,13 @@ const Dashboard: NextPage<Props> = (props) => {
             placeholder="Question"
             {...form.getInputProps(`questions.${index}.question`)}
           />
-          <button
-            className="btn-sm"
-            onClick={() => form.removeListItem('questions', index)}
-          >
+          <button className="btn-sm" onClick={() => form.removeListItem('questions', index)}>
             <IconCircleMinus size={25} />
           </button>
         </div>
       )}
     </Draggable>
-  ))
+  ));
 
   return (
     <>
@@ -212,10 +209,7 @@ const Dashboard: NextPage<Props> = (props) => {
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel className="h-auto w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
-                  >
+                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                     Create Your Space
                   </Dialog.Title>
                   <div className="my-6 grid grid-cols-2 gap-4">
@@ -229,11 +223,7 @@ const Dashboard: NextPage<Props> = (props) => {
                         src="https://images.unsplash.com/photo-1613687194025-417d0e1783aa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1035&q=80"
                       />
                     </div>
-                    <form
-                      onSubmit={form.onSubmit((values) =>
-                        handleOnSubmit(values)
-                      )}
-                    >
+                    <form onSubmit={form.onSubmit(values => handleOnSubmit(values))}>
                       <div className="form-control">
                         <div
                           className="tooltip flex items-center"
@@ -251,10 +241,7 @@ const Dashboard: NextPage<Props> = (props) => {
                         />
 
                         {form.errors.space_name ? (
-                          <p className="my-2 text-sm text-error">
-                            {' '}
-                            {form.errors.space_name}{' '}
-                          </p>
+                          <p className="my-2 text-sm text-error"> {form.errors.space_name} </p>
                         ) : null}
                         <div className="avatar my-5 items-center">
                           <div className="mr-2 w-16 rounded-full">
@@ -268,12 +255,10 @@ const Dashboard: NextPage<Props> = (props) => {
                           </div>
                           <label className="btn-ghost btn-sm btn my-2 w-52">
                             <IconFileUpload size={20} />
-                            <span className="text-base leading-normal">
-                              Select a file
-                            </span>
+                            <span className="text-base leading-normal">Select a file</span>
                             <input
-                              onChange={async (event) => {
-                                await handleUpload(event)
+                              onChange={async event => {
+                                await handleUpload(event);
                               }}
                               type="file"
                               accept=" image/jpeg "
@@ -290,10 +275,7 @@ const Dashboard: NextPage<Props> = (props) => {
                           {...form.getInputProps('header_title')}
                         />
                         {form.errors.header_title && (
-                          <p className="my-2 text-sm text-error">
-                            {' '}
-                            Header Title is required *{' '}
-                          </p>
+                          <p className="my-2 text-sm text-error"> Header Title is required * </p>
                         )}
                         <label className="label"> Custom Message </label>
                         <textarea
@@ -302,17 +284,12 @@ const Dashboard: NextPage<Props> = (props) => {
                           {...form.getInputProps('custom_message')}
                         ></textarea>
                         {form.errors.custom_message && (
-                          <p className="text-sm text-error ">
-                            {' '}
-                            Custom Message is required *{' '}
-                          </p>
+                          <p className="text-sm text-error "> Custom Message is required * </p>
                         )}
                         <button
                           type={'button'}
                           className="btn-ghost btn-wide btn-sm btn mt-4"
-                          onClick={() =>
-                            form.insertListItem('questions', { question: '' })
-                          }
+                          onClick={() => form.insertListItem('questions', { question: '' })}
                         >
                           <IconPlus size={'20'} /> Add Question
                         </button>
@@ -324,15 +301,9 @@ const Dashboard: NextPage<Props> = (props) => {
                             } as ReorderPayload)
                           }
                         >
-                          <Droppable
-                            droppableId="dnd-list"
-                            direction="vertical"
-                          >
-                            {(provided) => (
-                              <div
-                                {...provided.droppableProps}
-                                ref={provided.innerRef}
-                              >
+                          <Droppable droppableId="dnd-list" direction="vertical">
+                            {provided => (
+                              <div {...provided.droppableProps} ref={provided.innerRef}>
                                 {fields}
                                 {provided.placeholder}
                               </div>
@@ -340,16 +311,11 @@ const Dashboard: NextPage<Props> = (props) => {
                           </Droppable>
                         </DragDropContext>
                         {form.errors.questions && (
-                          <p className="text-sm text-error ">
-                            {' '}
-                            {form.errors.questions} *{' '}
-                          </p>
+                          <p className="text-sm text-error "> {form.errors.questions} * </p>
                         )}
                       </div>
                       <button
-                        className={`btn-primary btn ${
-                          loading ? `loading` : ''
-                        } btn-wide`}
+                        className={`btn-primary btn ${loading ? `loading` : ''} btn-wide`}
                         type="submit"
                       >
                         {' '}
@@ -364,20 +330,17 @@ const Dashboard: NextPage<Props> = (props) => {
         </Dialog>
       </Transition>
     </>
-  )
-}
+  );
+};
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const supabase = createServerSupabaseClient(ctx)
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  const supabase = createServerSupabaseClient(ctx);
 
   const {
     data: { session },
-  } = await supabase.auth.getSession()
+  } = await supabase.auth.getSession();
 
-  const { data: spaces } = await supabase
-    .from('spaces')
-    .select()
-    .eq('user_id', session?.user?.id)
+  const { data: spaces } = await supabase.from('spaces').select().eq('user_id', session?.user?.id);
 
   if (!session) {
     return {
@@ -385,7 +348,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         destination: '/auth/login',
         permanent: false,
       },
-    }
+    };
   }
 
   return {
@@ -394,7 +357,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       user: session?.user.id,
       spaces,
     },
-  }
-}
+  };
+};
 
-export default Dashboard
+export default Dashboard;

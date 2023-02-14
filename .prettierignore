@@ -1,0 +1,7 @@
+build
+coverage
+.next
+.idea
+.husky
+.vscode
+.env

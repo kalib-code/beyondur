@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Dialog, Transition } from '@headlessui/react'
+import { Dialog, Transition } from '@headlessui/react';
 import React, {
   Dispatch,
   Fragment,
@@ -14,19 +14,19 @@ import React, {
   useEffect,
   useMemo,
   useState,
-} from 'react'
-import Webcam from 'react-webcam'
-import VideoRecorder from 'react-video-recorder'
-import { useForm } from '@mantine/form'
-import { useCreateTestimony } from '../../hooks/apis/testimonies'
-import { uploadFile } from '../../utils/services/aws/s3'
-import { Json } from '../../utils/types/database'
-import 'plyr-react/plyr.css'
-import Plyr from 'plyr-react'
+} from 'react';
+import Webcam from 'react-webcam';
+import VideoRecorder from 'react-video-recorder';
+import { useForm } from '@mantine/form';
+import { useCreateTestimony } from '../../hooks/apis/testimonies';
+import { uploadFile } from '../../utils/services/aws/s3';
+import { Json } from '../../utils/types/database';
+import 'plyr-react/plyr.css';
+import Plyr from 'plyr-react';
 
 interface deviceProps {
-  kind: string
-  deviceId: string | number | readonly string[] | undefined
+  kind: string;
+  deviceId: string | number | readonly string[] | undefined;
   label:
     | string
     | number
@@ -35,50 +35,47 @@ interface deviceProps {
     | ReactFragment
     | ReactPortal
     | null
-    | undefined
+    | undefined;
 
   map(
-    arg0: (
-      device: deviceProps,
-      index: Key | null | undefined
-    ) => JSX.Element | undefined
-  ): import('react').ReactNode
+    arg0: (device: deviceProps, index: Key | null | undefined) => JSX.Element | undefined,
+  ): import('react').ReactNode;
 }
 
 interface IProps {
-  isOpen: boolean
-  setIsOpen: Dispatch<SetStateAction<boolean>>
-  videoFormStep: number
-  setVideoFormStep: Dispatch<SetStateAction<number>>
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  videoFormStep: number;
+  setVideoFormStep: Dispatch<SetStateAction<number>>;
   spaceId: {
-    id: string
-    created_at: string | null
-    modified_at: string | null
-    name: string | null
-    title: string | null
-    message: string | null
+    id: string;
+    created_at: string | null;
+    modified_at: string | null;
+    name: string | null;
+    title: string | null;
+    message: string | null;
     questions: {
-      question: string
-    }[]
-    logo_image: string | null
-    isVideoOnly: boolean | null
-    isUserConsent: boolean | null
-    isRating: boolean | null
-    links: Json[] | null
-  }
+      question: string;
+    }[];
+    logo_image: string | null;
+    isVideoOnly: boolean | null;
+    isUserConsent: boolean | null;
+    isRating: boolean | null;
+    links: Json[] | null;
+  };
 }
 
 interface IFormValues {
-  name: string
-  email: string
-  rating: number
-  video_url: string
-  isVideo: boolean
-  tags: Array<string>
-  isHighlight: boolean
-  isLike: boolean
-  spaces: string
-  isUserPermission: boolean
+  name: string;
+  email: string;
+  rating: number;
+  video_url: string;
+  isVideo: boolean;
+  tags: Array<string>;
+  isHighlight: boolean;
+  isLike: boolean;
+  spaces: string;
+  isUserPermission: boolean;
 }
 
 export const CreateVideo = ({
@@ -88,7 +85,7 @@ export const CreateVideo = ({
   setVideoFormStep,
   spaceId,
 }: IProps) => {
-  const mutation = useCreateTestimony()
+  const mutation = useCreateTestimony();
   const form = useForm<IFormValues>({
     initialValues: {
       name: '',
@@ -103,26 +100,26 @@ export const CreateVideo = ({
       isUserPermission: false,
     },
     validate(values) {
-      const errors: Partial<IFormValues> = {}
+      const errors: Partial<IFormValues> = {};
       if (!values.name) {
-        errors.name = 'Name is required'
+        errors.name = 'Name is required';
       }
       if (!values.email) {
-        errors.email = 'Email is required'
+        errors.email = 'Email is required';
       }
 
-      return errors
+      return errors;
     },
-  })
+  });
 
-  let [loading, setLoading] = useState(false)
-  let [devices, setDevices] = useState() as deviceProps[]
+  let [loading, setLoading] = useState(false);
+  let [devices, setDevices] = useState() as deviceProps[];
   let [selectedMediaDevice, setSelectedMediaDevice] = useState({
     video: '',
     audio: '',
-  })
-  let [stream, setStream] = useState<Blob>()
-  let [streamUrl, setStreamUrl] = useState('')
+  });
+  let [stream, setStream] = useState<Blob>();
+  let [streamUrl, setStreamUrl] = useState('');
 
   const handleDevices = useCallback(
     (mediaDevices: any) =>
@@ -130,61 +127,59 @@ export const CreateVideo = ({
       setDevices(
         mediaDevices.filter(
           // @ts-ignore
-          ({ kind }) => kind === 'videoinput' || kind === 'audioinput'
-        )
+          ({ kind }) => kind === 'videoinput' || kind === 'audioinput',
+        ),
       ),
-    [setDevices]
-  )
+    [setDevices],
+  );
   const constraints = {
     video: true,
     audio: true,
-  }
+  };
 
   function successCallback() {
-    navigator.mediaDevices.enumerateDevices().then(handleDevices)
-    console.log('success')
+    navigator.mediaDevices.enumerateDevices().then(handleDevices);
+    console.log('success');
   }
 
   function errorCallback() {
-    console.log('error')
+    console.log('error');
   }
 
   useEffect(
     () => {
-      navigator.mediaDevices
-        .getUserMedia(constraints)
-        .then(successCallback, errorCallback)
+      navigator.mediaDevices.getUserMedia(constraints).then(successCallback, errorCallback);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  )
+    [],
+  );
 
   function closeModal() {
-    setIsOpen(false)
+    setIsOpen(false);
   }
 
   function setVideoFormSteps() {
-    setVideoFormStep(videoFormStep + 1)
+    setVideoFormStep(videoFormStep + 1);
   }
 
   // @ts-ignore
 
   const onSubmitVideo = async (values: any) => {
-    form.validate()
-    setLoading(true)
+    form.validate();
+    setLoading(true);
     const file = {
       data: stream as Blob,
       userId: '123',
       spaceId,
-    }
-    if (!stream) return
-    const uploadData = await uploadFile(file)
-    values.video_url = uploadData.Key.replace('input/', '') as string
-    await mutation.mutateAsync(values)
-    setLoading(false)
-    form.reset()
-    closeModal()
-  }
+    };
+    if (!stream) return;
+    const uploadData = await uploadFile(file);
+    values.video_url = uploadData.Key.replace('input/', '') as string;
+    await mutation.mutateAsync(values);
+    setLoading(false);
+    form.reset();
+    closeModal();
+  };
 
   const sourceData = useMemo(() => {
     return {
@@ -198,8 +193,8 @@ export const CreateVideo = ({
         ],
       }, // https://github.com/sampotts/plyr#the-source-setter
       options: undefined, // https://github.com/sampotts/plyr#options
-    }
-  }, [streamUrl])
+    };
+  }, [streamUrl]);
 
   return (
     <>
@@ -254,7 +249,7 @@ export const CreateVideo = ({
                               <li className="" key={index}>
                                 {question.question}
                               </li>
-                            )
+                            );
                           })}
                         </ul>
                       </div>
@@ -269,8 +264,7 @@ export const CreateVideo = ({
                         Review your Video
                       </Dialog.Title>
                       <p className="text-center text-sm text-gray-500">
-                        Please fill out the required fields and submit your
-                        video.
+                        Please fill out the required fields and submit your video.
                       </p>
                     </>
                   ) : null}
@@ -278,9 +272,8 @@ export const CreateVideo = ({
                     {videoFormStep === 0 ? (
                       <>
                         <p className="text-sm text-gray-500">
-                          You have up to 120 seconds to record your video.
-                          Please make sure your camera and microphone are
-                          working properly.
+                          You have up to 120 seconds to record your video. Please make sure your
+                          camera and microphone are working properly.
                         </p>
                       </>
                     ) : null}
@@ -315,19 +308,18 @@ export const CreateVideo = ({
                         isFlipped
                         chunkSize={250}
                         onRecordingComplete={async (videoBlob: any) => {
-                          const Url = URL.createObjectURL(videoBlob)
-                          setStream(videoBlob)
-                          setStreamUrl(Url)
-                          setVideoFormStep(2)
+                          const Url = URL.createObjectURL(videoBlob);
+                          setStream(videoBlob);
+                          setStreamUrl(Url);
+                          setVideoFormStep(2);
                         }}
                         t={(key: any) => {
-                          if (key === 'PRESS') return 'Press'
-                          if (key === 'REC') return 'Record'
-                          if (key === 'WHEN READY') return 'Start'
-                          if (key === 'RECORDING') return 'Recording'
-                          if (key === 'STOP') return 'Stop'
-                          if (key === 'Use another video')
-                            return 'Use another video'
+                          if (key === 'PRESS') return 'Press';
+                          if (key === 'REC') return 'Record';
+                          if (key === 'WHEN READY') return 'Start';
+                          if (key === 'RECORDING') return 'Recording';
+                          if (key === 'STOP') return 'Stop';
+                          if (key === 'Use another video') return 'Use another video';
                         }}
                       />
                     ) : null}
@@ -336,55 +328,45 @@ export const CreateVideo = ({
                     <>
                       <select
                         defaultValue={'Default'}
-                        onChange={(event) => {
+                        onChange={event => {
                           setSelectedMediaDevice({
                             ...selectedMediaDevice,
                             video: event.target.value,
-                          })
+                          });
                         }}
                         className="select my-2 w-full max-w-md border"
                       >
                         {devices &&
-                          devices.map(
-                            (
-                              device: deviceProps,
-                              index: Key | null | undefined
-                            ) => {
-                              if (device.kind === 'videoinput') {
-                                return (
-                                  <option key={index} value={device.deviceId}>
-                                    {device.label}
-                                  </option>
-                                )
-                              }
+                          devices.map((device: deviceProps, index: Key | null | undefined) => {
+                            if (device.kind === 'videoinput') {
+                              return (
+                                <option key={index} value={device.deviceId}>
+                                  {device.label}
+                                </option>
+                              );
                             }
-                          )}
+                          })}
                       </select>
                       <select
                         defaultValue={'Default'}
-                        onChange={(e) => {
+                        onChange={e => {
                           setSelectedMediaDevice({
                             ...selectedMediaDevice,
                             audio: e.target.value,
-                          })
+                          });
                         }}
                         className="select my-2 w-full max-w-md border"
                       >
                         {devices &&
-                          devices?.map(
-                            (
-                              device: deviceProps,
-                              index: Key | null | undefined
-                            ) => {
-                              if (device.kind === 'audioinput') {
-                                return (
-                                  <option key={index} value={device.deviceId}>
-                                    {device.label}
-                                  </option>
-                                )
-                              }
+                          devices?.map((device: deviceProps, index: Key | null | undefined) => {
+                            if (device.kind === 'audioinput') {
+                              return (
+                                <option key={index} value={device.deviceId}>
+                                  {device.label}
+                                </option>
+                              );
                             }
-                          )}
+                          })}
                       </select>
                       <div className="mt-4">
                         <button
@@ -413,11 +395,7 @@ export const CreateVideo = ({
                         }
                       </div>
                       <div className="my-5 flex w-full flex-col">
-                        <form
-                          onSubmit={form.onSubmit((values) =>
-                            onSubmitVideo(values)
-                          )}
-                        >
+                        <form onSubmit={form.onSubmit(values => onSubmitVideo(values))}>
                           <div className="rating my-3">
                             <input
                               type="radio"
@@ -490,7 +468,7 @@ export const CreateVideo = ({
                             <button
                               type={'button'}
                               onClick={() => {
-                                setVideoFormStep(0)
+                                setVideoFormStep(0);
                               }}
                               className="btn-ghost btn"
                             >
@@ -498,9 +476,7 @@ export const CreateVideo = ({
                             </button>
                             <button
                               type={'submit'}
-                              className={`btn-primary btn ${
-                                loading ? `loading` : ''
-                              }`}
+                              className={`btn-primary btn ${loading ? `loading` : ''}`}
                             >
                               Confirm to Send
                             </button>
@@ -516,5 +492,5 @@ export const CreateVideo = ({
         </Dialog>
       </Transition>
     </>
-  )
-}
+  );
+};

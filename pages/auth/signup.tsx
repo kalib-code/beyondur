@@ -1,22 +1,22 @@
-import { useForm } from '@mantine/form'
-import { NextPage } from 'next'
-import React from 'react'
-import { supabase } from '../../utils/database/client'
-import { useRouter } from 'next/router'
+import { useForm } from '@mantine/form';
+import { NextPage } from 'next';
+import React from 'react';
+import { supabase } from '../../utils/database/client';
+import { useRouter } from 'next/router';
 
 interface FormValues {
-  email: string
-  password: string
-  confirmPassword: string
+  email: string;
+  password: string;
+  confirmPassword: string;
 }
 
 function isEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 const Signup: NextPage = () => {
-  let [loading, setLoading] = React.useState(false)
-  const router = useRouter()
+  let [loading, setLoading] = React.useState(false);
+  const router = useRouter();
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -24,40 +24,40 @@ const Signup: NextPage = () => {
       password: '',
       confirmPassword: '',
     },
-    validate: (values) => {
+    validate: values => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const errors: any = {}
+      const errors: any = {};
       // validate email if string is email
       if (!values.email || !isEmail(values.email)) {
-        errors.email = 'Invalid email'
+        errors.email = 'Invalid email';
       }
       if (!values.password) {
-        errors.password = 'Password is required'
+        errors.password = 'Password is required';
       }
 
       if (values.password !== values.confirmPassword) {
-        errors.confirmPassword = 'Passwords do not match'
+        errors.confirmPassword = 'Passwords do not match';
       }
-      return errors
+      return errors;
     },
-  })
+  });
 
   const handleSignUp = async (values: FormValues) => {
-    setLoading(true)
-    form.validate()
+    setLoading(true);
+    form.validate();
 
     const { data, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
-    })
+    });
     if (error) {
-      console.log(error)
+      console.log(error);
     }
     if (data) {
-      router.push('/auth/email-confirmation')
-      setLoading(false)
+      router.push('/auth/email-confirmation');
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -65,7 +65,7 @@ const Signup: NextPage = () => {
         <div className=" flex-col ">
           <div className="card w-96 bg-base-100 shadow-2xl">
             <div className="card-body">
-              <form onSubmit={form.onSubmit((values) => handleSignUp(values))}>
+              <form onSubmit={form.onSubmit(values => handleSignUp(values))}>
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text">Email</span>
@@ -77,10 +77,7 @@ const Signup: NextPage = () => {
                     {...form.getInputProps('email')}
                   />
                   {form.errors.email && (
-                    <label className="label text-sm text-error">
-                      {' '}
-                      Please input valid email{' '}
-                    </label>
+                    <label className="label text-sm text-error"> Please input valid email </label>
                   )}
                 </div>
                 <div className="form-control">
@@ -114,9 +111,7 @@ const Signup: NextPage = () => {
                 <div className="form-control mt-6">
                   <button
                     type="submit"
-                    className={`btn-primary btn ${
-                      loading ? 'loading' : ''
-                    } mb-4`}
+                    className={`btn-primary btn ${loading ? 'loading' : ''} mb-4`}
                   >
                     SignUp
                   </button>
@@ -131,7 +126,7 @@ const Signup: NextPage = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Signup
+export default Signup;

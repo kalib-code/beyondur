@@ -1,34 +1,34 @@
-import { supabase } from '../../utils/database/client'
-import { useRouter } from 'next/router'
-import Image from 'next/image'
-import { useGetIdentity } from '@/hooks/auth'
-import { getPublicUrl } from '../../utils/services/supabase'
-import { useEffect, useState } from 'react'
+import { supabase } from '../../utils/database/client';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
+import { useGetIdentity } from '@/hooks/auth';
+import { getPublicUrl } from '../../utils/services/supabase';
+import { useEffect, useState } from 'react';
 
 export interface IUser {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  user: any | null
+  user: any | null;
   profile: {
-    id: string
-    updated_at: string | null
-    username: string | null
-    full_name: string | null
-    avatar_url: string | null
-    website: string | null
-  } | null
+    id: string;
+    updated_at: string | null;
+    username: string | null;
+    full_name: string | null;
+    avatar_url: string | null;
+    website: string | null;
+  } | null;
 }
 
 export const NavBar = () => {
-  const router = useRouter()
-  let [user, setUser] = useState<IUser>()
+  const router = useRouter();
+  let [user, setUser] = useState<IUser>();
 
-  const { data, isFetching, isError } = useGetIdentity()
+  const { data, isFetching, isError } = useGetIdentity();
 
   useEffect(() => {
     if (data) {
-      setUser(data)
+      setUser(data);
     }
-  }, [data, isFetching, isError])
+  }, [data, isFetching, isError]);
 
   return (
     <>
@@ -36,7 +36,7 @@ export const NavBar = () => {
         <div
           className="flex-1"
           onClick={() => {
-            router.push('/')
+            router.push('/');
           }}
         >
           <a className="btn-ghost btn text-xl normal-case">Beyondur</a>
@@ -44,16 +44,10 @@ export const NavBar = () => {
         <div className="flex-none">
           <div className="dropdown-end dropdown">
             <div className="flex items-center">
-              <label
-                tabIndex={0}
-                className="btn-ghost btn-circle avatar  btn mr-2"
-              >
+              <label tabIndex={0} className="btn-ghost btn-circle avatar  btn mr-2">
                 <div className="w-10 rounded-full">
                   <Image
-                    src={getPublicUrl(
-                      user?.profile?.avatar_url as string,
-                      'avatars'
-                    )}
+                    src={getPublicUrl(user?.profile?.avatar_url as string, 'avatars')}
                     width={100}
                     height={100}
                     alt={user?.profile?.full_name as string}
@@ -74,7 +68,7 @@ export const NavBar = () => {
                 <a
                   className="justify-between"
                   onClick={async () => {
-                    router.push('/profiles')
+                    router.push('/profiles');
                   }}
                 >
                   Profile
@@ -89,9 +83,9 @@ export const NavBar = () => {
               <li>
                 <a
                   onClick={async () => {
-                    const { error } = await supabase.auth.signOut()
-                    if (error) console.log(error)
-                    router.push('/')
+                    const { error } = await supabase.auth.signOut();
+                    if (error) console.log(error);
+                    router.push('/');
                   }}
                 >
                   Logout
@@ -102,5 +96,5 @@ export const NavBar = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
